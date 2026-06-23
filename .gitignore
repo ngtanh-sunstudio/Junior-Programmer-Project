@@ -1,0 +1,62 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Unity crash reports and memory captures
+sysinfo.txt
+*.stackdump
+*.dmp
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+
+# Unity cache and generated data
+[Aa]ssets/AssetStoreTools*
+[Aa]ssets/StreamingAssets/aa.meta
+[Aa]ssets/StreamingAssets/aa/*
+
+# Visual Studio / Rider / IDE generated files
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.slnx
+*.user
+*.userprefs
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+*.opendb
+*.VC.db
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Unity build outputs
+*.apk
+*.aab
+*.unitypackage
+*.app
+*.exe
+*.x86
+*.x86_64
+*.appx
+*.msix
+*.msixbundle
+
+# Logs and local diagnostics
+*.log
+*.tmp
+*.bak
+
+# Keep project source, assets, packages, project settings, and screenshots tracked.

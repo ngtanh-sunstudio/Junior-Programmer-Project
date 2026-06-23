@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83ddfe46b763cc84c81f3c75d75dc33a, type: 3}
+  m_Name: SpeedBoost
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedBoost
+  powerUpName: 1
+  powerupPrefab: {fileID: 5108385273817347866, guid: edfa3e62305f1124c9666f6bca8d5d67, type: 3}
+  duration: 10
+  speedMultiplier: 2
