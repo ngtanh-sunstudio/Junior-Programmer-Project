@@ -76,7 +76,7 @@ Editable source: [Screenshots/Flowchart.drawio](Screenshots/Flowchart.drawio)
 
 ## Gameplay Video
 
-[Watch the gameplay demo](Videos/Demo_01.mp4)
+[Watch the gameplay demo](https://www.dropbox.com/scl/fi/h5avcqdjesgjzb75sj2hr/Demo_01.mp4?rlkey=1oj2cia6x0762l1zdopedepdi&st=m2rrcpx7&dl=0)
 
 ## Play Online
 
