@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -11,8 +12,12 @@ public class EnemyController : MonoBehaviour
 
     [Header("Score")]
     [SerializeField] private int scoreValue = 10;
+
     private ScoreKeeper scoreKeeper;
     private Rigidbody enemyRigidbody;
+    private bool isDead;
+
+    public event Action Died;
 
     public void Initialize(ScoreKeeper scoreKeeper)
     {
@@ -63,6 +68,11 @@ public class EnemyController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead || damage <= 0)
+        {
+            return;
+        }
+
         currentHealth -= damage;
 
         if (healthBar != null)
@@ -72,12 +82,7 @@ public class EnemyController : MonoBehaviour
 
         if (currentHealth < 1)
         {
-            if (scoreKeeper != null)
-            {
-                scoreKeeper.AddScore(scoreValue);
-            }
-
-            Destroy(gameObject);
+            Die();
         }
     }
 
@@ -87,5 +92,23 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void Die()
+    {
+        if (isDead)
+        {
+            return;
+        }
+        
+        isDead = true;
+
+        if (scoreKeeper != null)
+        {
+            scoreKeeper.AddScore(scoreValue);
+        }
+
+        Died?.Invoke();
+        Destroy(gameObject);
     }
 }

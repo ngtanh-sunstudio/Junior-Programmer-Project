@@ -45,12 +45,6 @@ public class SpawnManager : MonoBehaviour
         InvokeRepeating(nameof(SpawnPowerup), powerupSpawnDelay, powerupSpawnInterval);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private Vector3 GenerateRandomPosition()
     {
         return new Vector3(Random.Range(-xRange, xRange), 0.5f, 30f);

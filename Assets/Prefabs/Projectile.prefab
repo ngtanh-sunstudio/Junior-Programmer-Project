@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2823267441662191929}
   - component: {fileID: 2155573346165632236}
   - component: {fileID: 8389636976607375220}
+  - component: {fileID: 1146951839472494717}
   m_Layer: 9
   m_Name: Projectile
   m_TagString: Untagged
@@ -158,3 +159,17 @@ MonoBehaviour:
   speed: 15
   zRange: 30
   projectileDamage: 1
+  owner: 0
+--- !u!114 &1146951839472494717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5105258617923826358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e366d7a4f9390c458388a54c23e85d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAudio
+  projectileHitSFX: {fileID: 8300000, guid: 544aa576e1d57874593e903c9e349a2f, type: 3}

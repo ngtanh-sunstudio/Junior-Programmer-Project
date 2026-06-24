@@ -8,19 +8,19 @@ public class SpeedBoost : PowerupEffect
 
     public override void Apply(GameObject player)
     {
-        PlayerController playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        if (playerMovement != null)
         {
-            playerController.SetSpeedMultiplier(speedMultiplier);
+            playerMovement.SetSpeedMultiplier(speedMultiplier);
         }
     }
 
     public override void Remove(GameObject player)
     {
-        PlayerController playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        if (playerMovement != null)
         {
-            playerController.SetSpeedMultiplier(baseSpeedMultiplier);
+            playerMovement.SetSpeedMultiplier(baseSpeedMultiplier);
         }
     }
 }

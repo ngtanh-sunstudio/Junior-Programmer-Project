@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum ProjectileOwner
@@ -13,14 +14,9 @@ public class ProjectileController : MonoBehaviour
     [SerializeField] private int projectileDamage = 1;
     [SerializeField] private ProjectileOwner owner = ProjectileOwner.Player;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public event Action Hit;
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         MoveProjectile();
         DestroyOutOfBounds();
@@ -45,7 +41,7 @@ public class ProjectileController : MonoBehaviour
         projectileDamage = damage;
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (owner == ProjectileOwner.Player)
         {
@@ -63,27 +59,33 @@ public class ProjectileController : MonoBehaviour
         if (enemy != null)
         {
             enemy.TakeDamage(projectileDamage);
-            Destroy(gameObject);
+            HandleHit();
             return;
         }
 
-        BossController boss = other.GetComponentInParent<BossController>();
-        if (boss != null)
+        BossHealth bossHealth = other.GetComponentInParent<BossHealth>();
+        if (bossHealth != null)
         {
-            boss.TakeDamage(projectileDamage);
-            Destroy(gameObject);
+            bossHealth.TakeDamage(projectileDamage);
+            HandleHit();
         }
     }
 
     private void DamagePlayer(Collider other)
     {
-        PlayerController player = other.GetComponentInParent<PlayerController>();
-        if (player == null)
+        PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
+        if (playerHealth == null)
         {
             return;
         }
 
-        player.TakeProjectileDamage(projectileDamage);
+        playerHealth.TakeDamage(projectileDamage);
+        HandleHit();
+    }
+
+    private void HandleHit()
+    {
+        Hit?.Invoke();
         Destroy(gameObject);
     }
 }

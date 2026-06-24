@@ -482,6 +482,10 @@ GameObject:
   - component: {fileID: 3614854369636710822}
   - component: {fileID: 8967261081730417100}
   - component: {fileID: 2207275761167310887}
+  - component: {fileID: 9000000000000000004}
+  - component: {fileID: 9000000000000000005}
+  - component: {fileID: 9000000000000000006}
+  - component: {fileID: 4016180166593367764}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
@@ -624,20 +628,70 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossController
   gameManager: {fileID: 0}
-  speed: 15
-  xMoveInterval: 3
-  xRange: 15
-  targetZ: 15
+  scoreValue: 500
+--- !u!114 &9000000000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938296908258417283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 310f326aa5b643a0b241dd04fe9919ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossHealth
   maxHealth: 100
   healthBar: {fileID: 836706029330113328}
+--- !u!114 &9000000000000000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938296908258417283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b647e4475b4145922447c41d3a4665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossMovement
+  speed: 15
+  xRange: 15
+  targetZ: 15
+--- !u!114 &9000000000000000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938296908258417283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e5d320f4cc4fd6a63d2fd36e47801e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossWeapon
   projectilePrefab: {fileID: 5105258617923826358, guid: 6fada03b976410f4eb35cb77a9cf3105, type: 3}
   turret: {fileID: 8050557216725388876}
   spreadAngle: 15
   bulletsPerVolley: 3
   volleysFired: 5
   fireCooldown: 0.1
+  movementDelayAfterFiring: 3
   projectileDamage: 1
-  scoreValue: 500
+--- !u!114 &4016180166593367764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938296908258417283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 404013223668757478181d599f8006bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAudio
+  bossDieSFX: {fileID: 8300000, guid: 7607721a20cbb5540b17a20c2bad1ba9, type: 3}
+  bossFireSFX: {fileID: 8300000, guid: ce221ef8387e3e8409760ce690234ad8, type: 3}
 --- !u!1 &7221043795211155141
 GameObject:
   m_ObjectHideFlags: 0

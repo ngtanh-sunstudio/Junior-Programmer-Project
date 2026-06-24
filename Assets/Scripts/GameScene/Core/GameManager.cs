@@ -2,7 +2,6 @@ using TMPro;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
@@ -78,6 +77,8 @@ public class GameManager : MonoBehaviour
         {
             gameOverOverlay.SetActive(true);
         }
+
+        AudioManager.Instance?.PlayEndingBGM();
     }
 
     public void WinGame()
@@ -113,6 +114,8 @@ public class GameManager : MonoBehaviour
         {
             winOverlay.SetActive(true);
         }
+
+        AudioManager.Instance?.PlayEndingBGM();
     }
 
     public void TogglePause()

@@ -32,6 +32,8 @@ Implemented features:
 
 - Title screen with Play, Settings, and Quit buttons.
 - Settings overlay with Music and SFX sliders.
+- Persistent music and SFX volume controls.
+- Automatic click SFX registration for scene buttons.
 - Animated transitions between menu and settings panels.
 - Layered parallax starfield background.
 
@@ -39,10 +41,7 @@ Scripts:
 
 - `MenuController` loads the game scene, quits the application, and toggles settings animation state.
 - `ParallaxBackground` duplicates a stretched UI image and scrolls both copies to create a looping background.
-
-Current limitation:
-
-- Music and SFX sliders are visible, but not wired to actual audio volume controls yet.
+- `AudioManager` persists between scenes, selects scene music, and owns the shared music and SFX audio sources.
 
 ## Gameplay Scene
 
@@ -67,7 +66,16 @@ Enemies spawn ahead of the player and move backward through the playfield. Proje
 
 ## Player
 
-Script: `PlayerController`
+The player uses focused components rather than one controller containing every responsibility:
+
+| Script | Responsibility |
+| --- | --- |
+| `PlayerController` | Input and high-level orchestration |
+| `PlayerMovement` | Movement, bounds, speed multiplier, and physics drift |
+| `PlayerWeapon` | Projectile spawning, cooldown, multifire, and firing events |
+| `PlayerHealth` | Health, collision handling, shield consumption, and death events |
+| `PlayerPowerUpManager` | Active powerup duration and cancellation |
+| `PlayerAudio` | Subscribes to player events and requests SFX playback |
 
 Implemented behavior:
 
@@ -93,9 +101,10 @@ Current player prefab tuning:
 
 Collision behavior:
 
-- Normal enemy collision damages the player and destroys the enemy.
+- Normal enemy collision damages the player and routes the enemy through its standard death pipeline.
 - Boss collision damages both the player and boss.
 - Shield blocks one damage event and then turns off.
+- Consuming a shield raises an event that cancels its remaining duration coroutine.
 
 ## Projectiles
 
@@ -108,6 +117,8 @@ Implemented behavior:
 - Stores an owner so player and boss projectiles damage different targets.
 - Player projectiles damage enemies and bosses.
 - Boss projectiles damage the player.
+- Raises a `Hit` event after a valid impact.
+- `ProjectileAudio` subscribes to `Hit` and plays the impact clip through `AudioManager`.
 
 Current projectile prefab tuning:
 
@@ -154,11 +165,19 @@ Enemy prefab tuning:
 | `Enemy_2` | `4` | `5` | `25` |
 | `Enemy_3` | `3` | `7` | `50` |
 
-Each enemy has a health bar, a score value, forward movement, and out-of-bounds cleanup.
+Each enemy has a health bar, a score value, forward movement, and out-of-bounds cleanup. Enemy death is routed through `EnemyController.Die()`, which guards against duplicate processing, awards score, raises `Died`, and destroys the object. `EnemyAudio` subscribes to `Died`.
 
 ## Boss Encounter
 
-Script: `BossController`
+Boss behavior is split by responsibility:
+
+| Script | Responsibility |
+| --- | --- |
+| `BossController` | Initialization, score reward, and win orchestration |
+| `BossMovement` | Entry movement and side-to-side targeting |
+| `BossWeapon` | Volley sequencing, projectile spawning, and firing events |
+| `BossHealth` | Health state and death event |
+| `BossAudio` | Boss firing and death SFX |
 
 Implemented behavior:
 
@@ -202,6 +221,8 @@ Core files:
 | `SpeedBoost` | Applies movement speed multiplier |
 | `Shield` | Enables one-hit shield protection |
 | `Multifire` | Enables spread firing |
+
+`PlayerPowerUpManager` owns effect duration coroutines. When a shield is consumed early, `PlayerHealth` raises `ShieldConsumed`; the manager subscribes to that event and stops/removes the active shield coroutine.
 
 Powerup tuning:
 
@@ -256,6 +277,35 @@ Imported asset groups currently used or kept in the project:
 - Sci-fi sound effect files.
 - TextMesh Pro fonts, shaders, and settings.
 
+### Audio Architecture
+
+Audio uses a hybrid centralized/event-driven design.
+
+`AudioManager` is the persistent playback service:
+
+- Uses separate `AudioSource` components for music and SFX.
+- Loops title and gameplay BGM and switches tracks based on the loaded scene.
+- Plays ending music on win or game over.
+- Applies Music and SFX slider values immediately.
+- Registers one shared click listener for all scene buttons, including initially inactive buttons.
+- Exposes `PlaySFX(AudioClip)` so gameplay audio components do not manage their own AudioSources.
+
+Gameplay systems publish events without depending directly on audio clips:
+
+| Publisher | Event | Subscriber |
+| --- | --- | --- |
+| `PlayerHealth` | `Died`, `Shielded` | `PlayerAudio` |
+| `PlayerMovement` | `SpedUp` | `PlayerAudio` |
+| `PlayerWeapon` | `Fired`, `Multifire` | `PlayerAudio` |
+| `EnemyController` | `Died` | `EnemyAudio` |
+| `BossHealth` | `Died` | `BossAudio` |
+| `BossWeapon` | `Fired` | `BossAudio` |
+| `ProjectileController` | `Hit` | `ProjectileAudio` |
+
+Subscribers register in `OnEnable` and unregister in `OnDisable`. The publisher decides when a gameplay event occurred; the audio component decides which clip represents it. Because clips play through the persistent `AudioManager`, sounds can finish after the originating projectile, enemy, boss, or player object is destroyed.
+
+Both build scenes contain an AudioManager so either scene can be tested directly. During normal scene transitions, the persistent instance keeps running and duplicate scene instances destroy themselves.
+
 Custom materials:
 
 - Boss material.
@@ -276,11 +326,22 @@ Animation folders:
 | Script | Purpose |
 | --- | --- |
 | `GameManager` | Overall game state, pause, restart, quit, win, game over |
-| `PlayerController` | Player movement, firing, health, collisions, powerup state |
+| `AudioManager` | Persistent BGM/SFX playback, volume controls, and shared button sounds |
+| `PlayerController` | Player input and high-level orchestration |
+| `PlayerMovement` | Movement, bounds, and speed state |
+| `PlayerWeapon` | Shooting, multifire, and firing events |
+| `PlayerHealth` | Health, shields, collisions, and death events |
+| `PlayerAudio` | Player event-to-SFX adapter |
 | `SpawnManager` | Enemy waves, boss spawning, powerup spawning, difficulty ramp |
-| `EnemyController` | Enemy movement, health, scoring, cleanup |
-| `BossController` | Boss movement, shooting, health, scoring, win condition |
+| `EnemyController` | Enemy movement, health, scoring, death event, cleanup |
+| `EnemyAudio` | Enemy death SFX |
+| `BossController` | Boss initialization, scoring, and win condition |
+| `BossMovement` | Boss movement state |
+| `BossWeapon` | Boss projectile volleys and firing event |
+| `BossHealth` | Boss health and death event |
+| `BossAudio` | Boss firing and death SFX |
 | `ProjectileController` | Projectile movement and damage routing |
+| `ProjectileAudio` | Projectile impact SFX |
 | `PlayerPowerUpManager` | Active powerup duration tracking |
 | `PowerupEffect` | Base ScriptableObject type for powerups |
 | `PowerupItem` | Pickup trigger behavior |
@@ -317,10 +378,12 @@ Completed or mostly complete:
 - ScriptableObject powerup system.
 - Speed, shield, and multifire powerups.
 - Menu and player/game UI animations.
+- Scene-based looping BGM.
+- Music and SFX volume controls.
+- Automatic UI button click sounds.
+- Event-driven player, enemy, boss, and projectile SFX.
 
 In progress or unfinished:
 
 - Object pooling is planned but not implemented.
-- Settings sliders are present but not wired to music/SFX volume.
 - Boss red-zone attack is planned but not implemented.
-- Audio assets are present, but gameplay/audio management is not fully represented in the current scripts.

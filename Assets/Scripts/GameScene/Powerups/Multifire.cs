@@ -5,19 +5,19 @@ public class Multifire : PowerupEffect
 {
     public override void Apply(GameObject player)
     {
-        PlayerController playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        PlayerWeapon playerWeapon = player.GetComponent<PlayerWeapon>();
+        if (playerWeapon != null)
         {
-            playerController.SetMultifiring(true);
+            playerWeapon.SetMultifiring(true);
         }
     }
 
     public override void Remove(GameObject player)
     {
-        PlayerController playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        PlayerWeapon playerWeapon = player.GetComponent<PlayerWeapon>();
+        if (playerWeapon != null)
         {
-            playerController.SetMultifiring(false);
+            playerWeapon.SetMultifiring(false);
         }
     }
 }

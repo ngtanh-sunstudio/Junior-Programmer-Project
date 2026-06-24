@@ -786,7 +786,11 @@ GameObject:
   - component: {fileID: 5027672567422906935}
   - component: {fileID: 2475714172596554647}
   - component: {fileID: 2677339821554936504}
+  - component: {fileID: 9000000000000000001}
+  - component: {fileID: 9000000000000000002}
+  - component: {fileID: 9000000000000000003}
   - component: {fileID: 1182348204522070724}
+  - component: {fileID: 7853561201355672674}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -873,16 +877,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   gameManager: {fileID: 0}
+--- !u!114 &9000000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8694918042816311887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2161bbc67d470ba36b545aff80a70c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 10
   healthBar: {fileID: 6297420358047266892}
+  isShielded: 0
+  shieldIndicator: {fileID: 6950324248461503048}
+--- !u!114 &9000000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8694918042816311887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c647b073d7b48cd9aacd0c2f10e4a5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   speed: 15
+  xRange: 15
+  zUpperBound: 15
+  zLowerBound: 0
+--- !u!114 &9000000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8694918042816311887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f9576735a04426896c106d1de15c57f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWeapon
   animator: {fileID: 0}
   firingAnimationResetDelay: 0.1
   projectilePrefab: {fileID: 5105258617923826358, guid: 6fada03b976410f4eb35cb77a9cf3105, type: 3}
   projectileDamage: 1
   fireCooldown: 0.1
-  isShielded: 0
-  shieldIndicator: {fileID: 6950324248461503048}
   isMultifiring: 0
   bulletsWhenMultifiring: 3
   multifireSpreadAngle: 15
@@ -898,3 +941,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 454b1880deddb594c959aaab79eed4ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPowerUpManager
+--- !u!114 &7853561201355672674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8694918042816311887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48de876ba6bb2154b9bfd6dfd587c561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudio
+  playerDieSFX: {fileID: 8300000, guid: 56b0f1097d1b4934e9ca5576bc6eb75a, type: 3}
+  playerShieldSFX: {fileID: 8300000, guid: 920af5513403d7c49873e12e3783bff5, type: 3}
+  playerFireSFX: {fileID: 8300000, guid: 6e4a4ce67541e0a479153a8cdd71a2d8, type: 3}
+  playerSpeedSFX: {fileID: 8300000, guid: dc8dc2f9b17e9c245b0b999486409ee8, type: 3}
+  playerMultifireSFX: {fileID: 8300000, guid: 06ee7afd62b8a4949aae6fe77ff522d5, type: 3}

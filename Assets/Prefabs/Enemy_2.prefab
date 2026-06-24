@@ -240,6 +240,7 @@ GameObject:
   - component: {fileID: 1402872057098984638}
   - component: {fileID: 4926428399434423450}
   - component: {fileID: 8359109148162582121}
+  - component: {fileID: -2803289791075311503}
   m_Layer: 7
   m_Name: Enemy_2
   m_TagString: Enemy
@@ -385,6 +386,19 @@ MonoBehaviour:
   healthBar: {fileID: 8140684867621381969}
   zRange: 30
   scoreValue: 25
+--- !u!114 &-2803289791075311503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4690116362974386135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9179283302cb414485aca7ae27d591a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAudio
+  enemyDieSFX: {fileID: 8300000, guid: b955739967727d94ea3b52af1be68c0d, type: 3}
 --- !u!1 &5973865984770092386
 GameObject:
   m_ObjectHideFlags: 0

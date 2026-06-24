@@ -1,0 +1,56 @@
+using System;
+using UnityEngine;
+
+public class BossHealth : MonoBehaviour
+{
+    [SerializeField] private int maxHealth = 50;
+    [SerializeField] private HealthBar healthBar;
+    
+    private int currentHealth;
+    private bool isDead;
+
+    public event Action Died;
+    public int CurrentHealth => currentHealth;
+
+    private void Awake()
+    {
+        if (healthBar == null)
+        {
+            healthBar = GetComponentInChildren<HealthBar>(true);
+        }
+    }
+
+    private void Start()
+    {
+        currentHealth = maxHealth;
+
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (isDead || damage <= 0)
+        {
+            return;
+        }
+
+        currentHealth -= damage;
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHealth);
+        }
+
+        if (currentHealth > 0)
+        {
+            return;
+        }
+
+        isDead = true;
+        Died?.Invoke();
+        Destroy(gameObject);
+    }
+}
