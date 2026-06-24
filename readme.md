@@ -7,7 +7,7 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 - Built a complete arcade game loop with a main menu, gameplay scene, pause state, game-over state, and win state.
 - Implemented player movement, shooting, collision damage, health bars, and score tracking.
 - Created enemy wave spawning with difficulty scaling and three enemy tiers.
-- Added a boss encounter with movement, health, score reward, and projectile volleys.
+- Added a boss encounter with movement, health, score reward, and projectile volleys, and periodic arena-wide warning-zone attacks.
 - Built a ScriptableObject-based powerup system for speed boost, shield, and multifire.
 - Added looping scene music, volume controls, shared button sounds, and event-driven gameplay SFX.
 - Added projectile impact, player death, and boss death particle effects.

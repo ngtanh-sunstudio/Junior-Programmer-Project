@@ -178,6 +178,7 @@ Boss behavior is split by responsibility:
 | `BossController` | Initialization, score reward, and win orchestration |
 | `BossMovement` | Entry movement and side-to-side targeting |
 | `BossWeapon` | Volley sequencing, projectile spawning, and firing events |
+| `BossZoneAttack` | Periodic warning-zone selection, damage queries, and zone cleanup |
 | `BossHealth` | Health state and death event |
 | `BossAudio` | Boss firing and death SFX |
 
@@ -186,9 +187,21 @@ Implemented behavior:
 - Moves from spawn position to battle position.
 - Moves side to side after reaching battle position.
 - Stops to fire spread volleys.
+- Periodically activates one of three red warning zones and damages the player if they remain inside when the warning expires.
+- Runs zone attacks independently from boss movement and projectile volleys, allowing both attack types to overlap.
 - Awards score on defeat.
 - Spawns a detached death particle effect before the boss object is destroyed.
 - Triggers the win screen when defeated.
+
+Red-zone attack implementation:
+
+- The three zone objects are stored under a `Zones` transform in the boss prefab so their geometry and arena transforms can be authored visually.
+- `BossZoneAttack.Awake()` detaches the `Zones` transform from the randomly positioned boss, then resets it to world position zero, identity rotation, and unit scale. The zones therefore stay fixed in arena space while the boss moves.
+- All zones begin inactive. Every attack interval, the coroutine randomly selects one zone, displays it for the warning duration, applies damage, and hides it again.
+- Damage uses `Physics.OverlapBox` with the selected `BoxCollider`'s world-space `bounds.center` and `bounds.extents`. This is valid because the current zones remain aligned to world axes using 90-degree rotations.
+- The overlap results use `GetComponentInParent<PlayerHealth>()`, so only colliders inside the selected zone are inspected and no scene-wide player search is required.
+- Empty zone entries and missing colliders are guarded with warnings.
+- The detached zone root is destroyed when the boss is destroyed, preventing an orphaned scene object.
 
 Current boss prefab tuning:
 
@@ -204,11 +217,11 @@ Current boss prefab tuning:
 | Spread angle | `15` degrees |
 | Fire cooldown | `0.1` seconds |
 | Projectile damage | `1` |
+| Zone attack interval | `5` seconds |
+| Zone warning duration | `1.5` seconds |
+| Zone damage | `2` |
+| Zone patterns | `3` |
 | Score value | `500` |
-
-Current limitation:
-
-- Planned red-zone attack is not implemented yet.
 
 ## Powerups
 
@@ -355,6 +368,7 @@ Animation folders:
 | `BossController` | Boss initialization, scoring, and win condition |
 | `BossMovement` | Boss movement state |
 | `BossWeapon` | Boss projectile volleys and firing event |
+| `BossZoneAttack` | Periodic world-space warning zones and overlap-based player damage |
 | `BossHealth` | Boss health and death event |
 | `BossAudio` | Boss firing and death SFX |
 | `ProjectileController` | Projectile movement and damage routing |
@@ -392,6 +406,7 @@ Completed or mostly complete:
 - Difficulty scaling by wave size and enemy weights.
 - Three enemy tiers.
 - Boss encounter.
+- Boss red-zone attack.
 - ScriptableObject powerup system.
 - Speed, shield, and multifire powerups.
 - Menu and player/game UI animations.
@@ -404,4 +419,3 @@ Completed or mostly complete:
 In progress or unfinished:
 
 - Object pooling is planned but not implemented.
-- Boss red-zone attack is planned but not implemented.
