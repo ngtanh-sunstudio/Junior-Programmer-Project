@@ -86,6 +86,7 @@ Implemented behavior:
 - Tracks health and updates a world-space health bar.
 - Supports shield, speed boost, and multifire states.
 - Stops physics drift after collisions.
+- Spawns a detached death particle effect before the player object is destroyed.
 - Triggers game over when health reaches zero.
 
 Current player prefab tuning:
@@ -118,6 +119,7 @@ Implemented behavior:
 - Player projectiles damage enemies and bosses.
 - Boss projectiles damage the player.
 - Raises a `Hit` event after a valid impact.
+- Instantiates a detached impact particle effect at the projectile position before destroying the projectile.
 - `ProjectileAudio` subscribes to `Hit` and plays the impact clip through `AudioManager`.
 
 Current projectile prefab tuning:
@@ -185,6 +187,7 @@ Implemented behavior:
 - Moves side to side after reaching battle position.
 - Stops to fire spread volleys.
 - Awards score on defeat.
+- Spawns a detached death particle effect before the boss object is destroyed.
 - Triggers the win screen when defeated.
 
 Current boss prefab tuning:
@@ -276,6 +279,20 @@ Imported asset groups currently used or kept in the project:
 - Background music tracks.
 - Sci-fi sound effect files.
 - TextMesh Pro fonts, shaders, and settings.
+
+### Particle Effects
+
+Particle prefabs are stored in `Assets/Particles`:
+
+| Prefab | Trigger | Owner |
+| --- | --- | --- |
+| `ProjectileHitParticle` | A projectile damages a valid target | `ProjectileController` |
+| `PlayerDieParticle` | Player health reaches zero | `PlayerHealth` |
+| `BossDieParticle` | Boss health reaches zero | `BossHealth` |
+
+Each effect is instantiated as a separate scene object at the source object's position. This allows the source projectile, player, or boss to be destroyed immediately without also destroying the active particles. The temporary particle object is cleaned up after its configured duration and starting lifetime.
+
+The player and boss death particle systems use unscaled time. They therefore continue simulating after the game-over or win state sets `Time.timeScale` to `0`.
 
 ### Audio Architecture
 
@@ -382,6 +399,7 @@ Completed or mostly complete:
 - Music and SFX volume controls.
 - Automatic UI button click sounds.
 - Event-driven player, enemy, boss, and projectile SFX.
+- Projectile impact, player death, and boss death particle effects.
 
 In progress or unfinished:
 

@@ -10,6 +10,7 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 - Added a boss encounter with movement, health, score reward, and projectile volleys.
 - Built a ScriptableObject-based powerup system for speed boost, shield, and multifire.
 - Added looping scene music, volume controls, shared button sounds, and event-driven gameplay SFX.
+- Added projectile impact, player death, and boss death particle effects.
 - Added animated UI screens, parallax menu background, and fullscreen-aware UI scaling.
 - Organized gameplay code into focused Unity components for player, enemies, boss, spawning, powerups, UI, and menu behavior.
 
@@ -30,6 +31,7 @@ Junior Programmer Project/
 |   |   |-- Starfield Background/
 |   |   `-- Starfield Layered Background/
 |   |-- Materials/
+|   |-- Particles/
 |   |-- Powerups/
 |   |-- Prefabs/
 |   |-- Scenes/
