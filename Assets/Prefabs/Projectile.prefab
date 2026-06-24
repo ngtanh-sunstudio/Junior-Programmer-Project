@@ -159,6 +159,7 @@ MonoBehaviour:
   speed: 15
   zRange: 30
   projectileDamage: 1
+  hitParticle: {fileID: 5731919769480331252, guid: 7610baf9208b3df4883acbb0b4c672d4, type: 3}
   owner: 0
 --- !u!114 &1146951839472494717
 MonoBehaviour:

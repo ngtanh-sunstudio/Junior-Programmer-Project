@@ -5,6 +5,7 @@ public class BossHealth : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 50;
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private ParticleSystem dieParticle;
     
     private int currentHealth;
     private bool isDead;
@@ -51,6 +52,25 @@ public class BossHealth : MonoBehaviour
 
         isDead = true;
         Died?.Invoke();
+        PlayDieParticle();
         Destroy(gameObject);
+    }
+
+    private void PlayDieParticle()
+    {
+        if (dieParticle != null)
+        {
+            ParticleSystem effect = Instantiate(
+                dieParticle,
+                transform.position,
+                dieParticle.transform.rotation
+            );
+
+            effect.Play();
+            Destroy(
+                effect.gameObject,
+                effect.main.duration + effect.main.startLifetime.constant
+            );
+        }
     }
 }

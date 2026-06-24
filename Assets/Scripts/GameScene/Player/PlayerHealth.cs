@@ -8,6 +8,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private HealthBar healthBar;
     [SerializeField] private bool isShielded;
     [SerializeField] private GameObject shieldIndicator;
+    [SerializeField] private ParticleSystem dieParticle;
     
 
     private PlayerMovement movement;
@@ -128,7 +129,25 @@ public class PlayerHealth : MonoBehaviour
 
         isDead = true;
         Died?.Invoke();
+        PlayDieParticle();
         Destroy(gameObject);
     }
 
+    private void PlayDieParticle()
+    {
+        if (dieParticle != null)
+        {
+            ParticleSystem effect = Instantiate(
+                dieParticle,
+                transform.position,
+                dieParticle.transform.rotation
+            );
+
+            effect.Play();
+            Destroy(
+                effect.gameObject,
+                effect.main.duration + effect.main.startLifetime.constant
+            );
+        }
+    }
 }

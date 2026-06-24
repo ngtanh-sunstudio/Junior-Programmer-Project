@@ -643,6 +643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossHealth
   maxHealth: 100
   healthBar: {fileID: 836706029330113328}
+  dieParticle: {fileID: 5731919769480331252, guid: bbe2c6cd50e35dd429cb52efe4088090, type: 3}
 --- !u!114 &9000000000000000005
 MonoBehaviour:
   m_ObjectHideFlags: 0

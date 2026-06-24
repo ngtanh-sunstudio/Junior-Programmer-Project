@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public enum ProjectileOwner
@@ -12,6 +13,7 @@ public class ProjectileController : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private float zRange = 30f;
     [SerializeField] private int projectileDamage = 1;
+    [SerializeField] private ParticleSystem hitParticle;
     [SerializeField] private ProjectileOwner owner = ProjectileOwner.Player;
 
     public event Action Hit;
@@ -86,6 +88,25 @@ public class ProjectileController : MonoBehaviour
     private void HandleHit()
     {
         Hit?.Invoke();
+        PlayHitParticle();
         Destroy(gameObject);
+    }
+
+    private void PlayHitParticle()
+    {
+        if (hitParticle != null)
+        {
+            ParticleSystem effect = Instantiate(
+                hitParticle,
+                transform.position,
+                hitParticle.transform.rotation
+            );
+
+            effect.Play();
+            Destroy(
+                effect.gameObject,
+                effect.main.duration + effect.main.startLifetime.constant
+            );
+        }
     }
 }

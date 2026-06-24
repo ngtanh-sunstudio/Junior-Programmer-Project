@@ -893,6 +893,7 @@ MonoBehaviour:
   healthBar: {fileID: 6297420358047266892}
   isShielded: 0
   shieldIndicator: {fileID: 6950324248461503048}
+  dieParticle: {fileID: 5731919769480331252, guid: 97897cc47032b074fa7d96f8107c7757, type: 3}
 --- !u!114 &9000000000000000002
 MonoBehaviour:
   m_ObjectHideFlags: 0
