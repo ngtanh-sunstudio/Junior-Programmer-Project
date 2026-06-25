@@ -4,28 +4,28 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 
 ## What I Learned
 
-### Lab 2 - New Project with Primitives
+### [Lab 2 - New Project with Primitives](https://learn.unity.com/pathway/junior-programmer/unit/basic-gameplay/tutorial/lab-2-new-project-with-primitives?version=6.3)
 
 - Set up and organize the menu and gameplay scenes.
 - Block out the player, enemies, walls, boss, and projectiles as reusable prefabs.
 - Use simple materials to distinguish objects before adding visual polish.
 - Position the camera and gameplay boundaries for a top-down space shooter.
 
-### Lab 3 - Player Control
+### [Lab 3 - Player Control](https://learn.unity.com/pathway/junior-programmer/unit/sound-and-effects/tutorial/lab-3-player-control?version=6.3)
 
 - Read move, fire, and pause actions through the [Input System](Assets/InputSystem_Actions.inputactions) in [PlayerController](Assets/Scripts/GameScene/Player/PlayerController.cs).
 - Apply frame-rate-independent movement and clamp the player inside the arena in [PlayerMovement](Assets/Scripts/GameScene/Player/PlayerMovement.cs).
 - Separate firing, cooldowns, animation, and projectile creation into [PlayerWeapon](Assets/Scripts/GameScene/Player/PlayerWeapon.cs).
 - Keep player responsibilities modular through [PlayerHealth](Assets/Scripts/GameScene/Player/PlayerHealth.cs), [PlayerPowerUpManager](Assets/Scripts/GameScene/Player/PlayerPowerUpManager.cs), and [PlayerAudio](Assets/Scripts/GameScene/Player/PlayerAudio.cs).
 
-### Lab 4 - Basic Gameplay
+### [Lab 4 - Basic Gameplay](https://learn.unity.com/pathway/junior-programmer/unit/gameplay-mechanics/tutorial/lab-4-basic-gameplay?version=6.3)
 
 - Implement movement, health, scoring, collisions, and off-screen cleanup in [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs).
 - Route projectile movement and damage by its owner in [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
 - Spawn reusable enemy and powerup prefabs at timed, randomized positions through [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs).
 - Connect combat to score and game outcomes through [ScoreKeeper](Assets/Scripts/GameScene/UI/ScoreKeeper.cs) and [GameManager](Assets/Scripts/GameScene/Core/GameManager.cs).
 
-### Lab 5 - Swap Out Your Assets
+### [Lab 5 - Swap Out Your Assets](https://learn.unity.com/pathway/junior-programmer/unit/user-interface/tutorial/lab-5-swap-out-your-assets?version=6.3)
 
 - Import and select starfield assets for the main menu and gameplay background.
 - Fit the background images to their canvases while keeping UI scaling responsive in both scenes.
