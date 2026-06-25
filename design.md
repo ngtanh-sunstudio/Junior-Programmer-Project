@@ -52,9 +52,9 @@ This taught me to consider object lifetime and repeated allocation when a gamepl
 
 ## Making Powerups Reusable
 
-Rather than writing each pickup directly into the player controller, I created a shared [PowerupEffect](Assets/Scripts/GameScene/Powerups/PowerupEffect.cs) ScriptableObject base. Each effect defines how it is applied and removed, while [PowerupItem](Assets/Scripts/GameScene/Powerups/PowerupItem.cs) and [PlayerPowerUpManager](Assets/Scripts/GameScene/Player/PlayerPowerUpManager.cs) handle collection and duration.
+I used Google to research a simple ScriptableObject powerup pattern, then adapted it for this project. The shared [PowerupEffect](Assets/Scripts/GameScene/Powerups/PowerupEffect.cs) base defines how an effect is applied and removed, while [PowerupItem](Assets/Scripts/GameScene/Powerups/PowerupItem.cs) and [PlayerPowerUpManager](Assets/Scripts/GameScene/Player/PlayerPowerUpManager.cs) handle collection and duration.
 
-This separates powerup data from pickup behavior and lets speed, shield, and multifire use the same workflow. I learned that data-driven systems reduce duplicated code and make new content easier to add.
+Using the same pattern for [speed](Assets/Scripts/GameScene/Powerups/SpeedBoost.cs), [shield](Assets/Scripts/GameScene/Powerups/Shield.cs), and [multifire](Assets/Scripts/GameScene/Powerups/Multifire.cs) helped me understand how ScriptableObjects can separate reusable effect data from pickup behavior.
 
 ## Main Takeaway
 
