@@ -86,11 +86,11 @@ Editable source: [Screenshots/Flowchart.drawio](Screenshots/Flowchart.drawio)
 
 ## Gameplay Video
 
-[Watch the gameplay demo](https://www.dropbox.com/scl/fi/h5avcqdjesgjzb75sj2hr/Demo_01.mp4?rlkey=1oj2cia6x0762l1zdopedepdi&st=m2rrcpx7&dl=0)
+[Watch the gameplay demo](https://www.dropbox.com/scl/fi/r9yol8jy907zp8nfgmzeu/Demo_02.mp4?rlkey=jwlvd8j8lk2cw0p8or7sxurfn&st=lkjcvlit&dl=0)
 
 ## Play Online
 
-Unity Play link: To be added
+[Unity Play](https://play.unity.com/en/games/672f0ea6-bed0-45af-8355-194055eea3ad/junior-programmer-project)
 
 ## How to Run Locally
 
