@@ -6,31 +6,56 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 
 ### [Lab 2 - New Project with Primitives](https://learn.unity.com/pathway/junior-programmer/unit/basic-gameplay/tutorial/lab-2-new-project-with-primitives?version=6.3)
 
-- Set up and organize the menu and gameplay scenes.
-- Block out the player, enemies, walls, boss, and projectiles as reusable prefabs.
-- Use simple materials to distinguish objects before adding visual polish.
-- Position the camera and gameplay boundaries for a top-down space shooter.
+**New progress**
+
+- **New project for my Personal Project:** created a new Unity project with a Space Shooter theme.
+- **Camera positioned and rotated based on project type:** placed the camera above the play area for a top-down space shooter.
+- **All key objects in the scene with unique materials:** created the player (blue), three enemy types (3 shades of red), walls (white), projectiles (light blue), and powerups (green) materials.
+
+**New concepts & skills**
+
+- **Primitives:** built the gameplay objects and reusable prefabs from Unity's built-in 3D shapes.
+- **Create new materials:** created and applied materials to make each type of gameplay object recognizable.
+- **Export Unity packages:** learned to export the Assets folder as a project backup.
 
 ### [Lab 3 - Player Control](https://learn.unity.com/pathway/junior-programmer/unit/sound-and-effects/tutorial/lab-3-player-control?version=6.3)
 
-- Read move, fire, and pause actions through the [Input System](Assets/InputSystem_Actions.inputactions) in [PlayerController](Assets/Scripts/GameScene/Player/PlayerController.cs).
-- Apply frame-rate-independent movement and clamp the player inside the arena in [PlayerMovement](Assets/Scripts/GameScene/Player/PlayerMovement.cs).
-- Separate firing, cooldowns, animation, and projectile creation into [PlayerWeapon](Assets/Scripts/GameScene/Player/PlayerWeapon.cs).
-- Keep player responsibilities modular through [PlayerHealth](Assets/Scripts/GameScene/Player/PlayerHealth.cs), [PlayerPowerUpManager](Assets/Scripts/GameScene/Player/PlayerPowerUpManager.cs), and [PlayerAudio](Assets/Scripts/GameScene/Player/PlayerAudio.cs).
+**New progress**
+
+- **Player can move based on user input:** read movement through the [Input System](Assets/InputSystem_Actions.inputactions) in [PlayerController](Assets/Scripts/GameScene/Player/PlayerController.cs) and applied it in [PlayerMovement](Assets/Scripts/GameScene/Player/PlayerMovement.cs).
+- **Player movement is constrained to suit the game:** clamped the player's X and Z positions in [PlayerMovement](Assets/Scripts/GameScene/Player/PlayerMovement.cs).
+
+**New concepts & skills**
+
+- **Program in C# independently:** planned and wrote the [player movement](Assets/Scripts/GameScene/Player/PlayerMovement.cs) by researching and adapting previously learned input and movement code.
+- **Troubleshoot issues independently:** tested the controls and fixed movement problems by clamping the play area and clearing unwanted Rigidbody drift in [PlayerMovement](Assets/Scripts/GameScene/Player/PlayerMovement.cs).
 
 ### [Lab 4 - Basic Gameplay](https://learn.unity.com/pathway/junior-programmer/unit/gameplay-mechanics/tutorial/lab-4-basic-gameplay?version=6.3)
 
-- Implement movement, health, scoring, collisions, and off-screen cleanup in [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs).
-- Route projectile movement and damage by its owner in [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
-- Spawn reusable enemy and powerup prefabs at timed, randomized positions through [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs).
-- Connect combat to score and game outcomes through [ScoreKeeper](Assets/Scripts/GameScene/UI/ScoreKeeper.cs) and [GameManager](Assets/Scripts/GameScene/Core/GameManager.cs).
+**New functionality**
+
+- **Non-player object prefabs have basic movement:** through [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs) and [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
+- **Objects are destroyed when they leave the screen:** removed enemies in [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs) and returned off-screen projectiles through [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
+- **Collisions between objects are handled appropriately**
+- **Objects are spawned at appropriate locations on timed intervals:** used [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs) to spawn enemy waves and powerups at randomized positions.
+
+**New concepts & skills**
+
+- **Create basic gameplay independently:** planned how non-player objects should move, collide, and spawn, then implemented those rules in [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs), [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs), and [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs).
 
 ### [Lab 5 - Swap Out Your Assets](https://learn.unity.com/pathway/junior-programmer/unit/user-interface/tutorial/lab-5-swap-out-your-assets?version=6.3)
 
-- Import and select starfield assets for the main menu and gameplay background.
-- Fit the background images to their canvases while keeping UI scaling responsive in both scenes.
-- Create a continuous scrolling menu background by duplicating and wrapping UI images in [ParallaxBackground](Assets/Scripts/MainMenuScene/ParallaxBackground.cs).
-- Keep the primitive gameplay prefabs; this project only applies the lab's asset-replacement workflow to its backgrounds.
+**New functionality**
+
+- **Primitive objects replaced with new assets that function the same way:** I kept the primitive gameplay objects, but replaced the background in the Main Menu UI.
+
+**New concepts & skills**
+
+- **Art workflow:** import, browse, select, and apply external assets to an existing project.
+- **High vs. Low Poly:** model complexity vs. visual quality and performance.
+- **Asset Store:** imported starfield backgrounds.
+- **Nested Prefabs:** reusable prefabs placed inside another prefab.
+- **Material properties:** editable shader values stored in a material asset, such as its color, texture, or surface settings. (Source: [Unity Manual](https://docs.unity3d.com/6000.0/Documentation/Manual/writing-shader-material-properties.html))
 
 ### Extras
 
