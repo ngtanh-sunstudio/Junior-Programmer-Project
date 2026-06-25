@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BossWeapon : MonoBehaviour
 {
-    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private ObjectPool objectPool;
     [SerializeField] private Transform turret;
     [SerializeField] private float spreadAngle = 15f;
     [SerializeField] private int bulletsPerVolley = 3;
@@ -17,6 +17,11 @@ public class BossWeapon : MonoBehaviour
 
     public bool IsFiring { get; private set; }
     public event Action Fired;
+
+    public void Initialize(ObjectPool pool)
+    {
+        objectPool = pool;
+    }
 
     public void TryStartFiring(Action onFinished)
     {
@@ -47,8 +52,9 @@ public class BossWeapon : MonoBehaviour
 
     private void FireVolley()
     {
-        if (projectilePrefab == null)
+        if (objectPool == null)
         {
+            Debug.LogError("Boss Weapon has no object pool");
             return;
         }
 
@@ -70,7 +76,14 @@ public class BossWeapon : MonoBehaviour
     private void SpawnProjectile(Vector3 spawnPosition, Vector3 bulletDirection)
     {
         Quaternion bulletRotation = Quaternion.FromToRotation(Vector3.up, bulletDirection);
-        GameObject spawnedProjectile = Instantiate(projectilePrefab, spawnPosition, bulletRotation);
+        GameObject spawnedProjectile = objectPool.GetObjectFromPool(spawnPosition, bulletRotation);
+        
+        if (spawnedProjectile == null)
+        {
+            Debug.LogWarning("Projectile pool is exhausted.");
+            return;
+        }
+        
         ProjectileController projectile = spawnedProjectile.GetComponent<ProjectileController>();
 
         if (projectile != null)

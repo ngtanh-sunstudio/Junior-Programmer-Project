@@ -11,6 +11,7 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 - Built a ScriptableObject-based powerup system for speed boost, shield, and multifire.
 - Added looping scene music, volume controls, shared button sounds, and event-driven gameplay SFX.
 - Added projectile impact, player death, and boss death particle effects.
+- Added a shared projectile object pool used by both the player and spawned boss, avoiding repeated projectile instantiation and destruction during gameplay.
 - Added animated UI screens, parallax menu background, and fullscreen-aware UI scaling.
 - Organized gameplay code into focused Unity components for player, enemies, boss, spawning, powerups, UI, and menu behavior.
 

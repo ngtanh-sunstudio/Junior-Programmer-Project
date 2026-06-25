@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
+    [Header("Object Pool")]
+    [SerializeField] private ObjectPool objectPool;
+
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private float firingAnimationResetDelay = 0.1f;
 
     [Header("Shooting")]
-    [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private int projectileDamage = 1;
     [SerializeField] private float fireCooldown = 0.25f;
 
@@ -29,6 +31,10 @@ public class PlayerWeapon : MonoBehaviour
         {
             animator = GetComponentInChildren<Animator>();
         }
+        if(objectPool == null)
+        {
+            objectPool = FindFirstObjectByType<ObjectPool>();
+        }
     }
 
     private void Update()
@@ -46,12 +52,12 @@ public class PlayerWeapon : MonoBehaviour
     {
         TriggerFiringAnimation();
 
-        if (Time.time < nextFireTime || projectilePrefab == null)
+        if (Time.time < nextFireTime || objectPool == null)
         {
             return;
         }
 
-        Quaternion baseRotation = projectilePrefab.transform.rotation;
+        Quaternion baseRotation = objectPool.DefaultRotation;
         if (isMultifiring)
         {
             FireSpread(baseRotation);
@@ -62,7 +68,9 @@ public class PlayerWeapon : MonoBehaviour
         }
 
         nextFireTime = Time.time + fireCooldown;
-        Fired?.Invoke();
+        // Firing sound still plays even when pool is exhausted
+        // => Intentional design
+        Fired?.Invoke(); 
     }
 
     public void SetMultifiring(bool value)
@@ -89,8 +97,17 @@ public class PlayerWeapon : MonoBehaviour
 
     private void SpawnProjectile(Quaternion bulletRotation)
     {
-        GameObject spawnedProjectile = Instantiate(projectilePrefab, transform.position, bulletRotation);
-        ProjectileController projectile = spawnedProjectile.GetComponent<ProjectileController>();
+        GameObject spawnedProjectile = 
+            objectPool.GetObjectFromPool(transform.position, bulletRotation);
+
+        if(spawnedProjectile == null)
+        {
+            Debug.LogWarning("Pool is exhausted");
+            return;
+        }
+
+        ProjectileController projectile = 
+            spawnedProjectile.GetComponent<ProjectileController>();
 
         if (projectile != null)
         {

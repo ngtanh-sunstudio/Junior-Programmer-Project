@@ -28,6 +28,7 @@ public class SpawnManager : MonoBehaviour
     private bool isBossAlive = false;
     private float xRange = 15f;
     [SerializeField] private ScoreKeeper scoreKeeper;
+    [SerializeField] private ObjectPool objectPool;
 
     [Header("Powerups")]
     [SerializeField] private PowerupEffect[] powerupEffects;
@@ -156,13 +157,22 @@ public class SpawnManager : MonoBehaviour
         }
 
         Vector3 bossPos = GenerateRandomPosition();
-        GameObject spawnedBoss = Instantiate(bossPrefab, bossPos,
-                    Quaternion.FromToRotation(Vector3.forward, -Vector3.forward));
+        GameObject spawnedBoss = Instantiate(
+            bossPrefab, 
+            bossPos,
+            Quaternion.FromToRotation(Vector3.forward, -Vector3.forward));
         BossController boss = spawnedBoss.GetComponent<BossController>();
+        BossWeapon weapon = spawnedBoss.GetComponent<BossWeapon>();
+
         if (boss != null)
         {
             boss.Initialize(scoreKeeper);
         }
+        if (weapon != null)
+        {
+            weapon.Initialize(objectPool);
+        }
+        
         isBossAlive = true;
     }
 

@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public enum ProjectileOwner
@@ -15,8 +14,14 @@ public class ProjectileController : MonoBehaviour
     [SerializeField] private int projectileDamage = 1;
     [SerializeField] private ParticleSystem hitParticle;
     [SerializeField] private ProjectileOwner owner = ProjectileOwner.Player;
+    [SerializeField] private ObjectPool objectPool;
 
     public event Action Hit;
+
+    private void Awake()
+    {
+        objectPool = GetComponentInParent<ObjectPool>();
+    }
 
     private void Update()
     {
@@ -33,7 +38,7 @@ public class ProjectileController : MonoBehaviour
     {
         if (transform.position.z > zRange || transform.position.z < -zRange)
         {
-            Destroy(gameObject);
+            ReturnToPool();
         }
     }
 
@@ -89,7 +94,7 @@ public class ProjectileController : MonoBehaviour
     {
         Hit?.Invoke();
         PlayHitParticle();
-        Destroy(gameObject);
+        ReturnToPool();
     }
 
     private void PlayHitParticle()
@@ -107,6 +112,19 @@ public class ProjectileController : MonoBehaviour
                 effect.gameObject,
                 effect.main.duration + effect.main.startLifetime.constant
             );
+        }
+    }
+
+    private void ReturnToPool()
+    {
+        if (objectPool != null)
+        {
+            objectPool.ReturnObjectToPool(gameObject);
+        }
+        else
+        {
+            Debug.LogError("Projectile has no ObjectPool reference.", this);
+            gameObject.SetActive(false);
         }
     }
 }
