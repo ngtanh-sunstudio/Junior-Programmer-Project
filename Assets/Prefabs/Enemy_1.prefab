@@ -451,6 +451,8 @@ GameObject:
   - component: {fileID: 4483017431213464515}
   - component: {fileID: 8537818371507141859}
   - component: {fileID: 6901665852566204030}
+  - component: {fileID: 6901665852566204031}
+  - component: {fileID: 6901665852566204032}
   - component: {fileID: 5228444909701817078}
   m_Layer: 7
   m_Name: Enemy_1
@@ -592,11 +594,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410fce53b4801784e90d1e8946bf273f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  speed: 5
+  scoreValue: 10
+--- !u!114 &6901665852566204031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8781912088802715026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7acd86e0d454e7fb946e86a50b5f76c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 3
   healthBar: {fileID: 7208076001821199318}
+--- !u!114 &6901665852566204032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8781912088802715026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c447469d1534f08af26282c7be51010, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
+  speed: 5
   zRange: 30
-  scoreValue: 10
 --- !u!114 &5228444909701817078
 MonoBehaviour:
   m_ObjectHideFlags: 0
