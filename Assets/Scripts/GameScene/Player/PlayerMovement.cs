@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (playerRigidbody == null)
         {
+            Debug.LogError($"{nameof(PlayerMovement)} cannot stop physics drift because the rigidbody reference is missing.", this);
             return;
         }
 

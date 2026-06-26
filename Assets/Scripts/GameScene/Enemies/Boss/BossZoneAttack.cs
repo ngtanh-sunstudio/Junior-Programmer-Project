@@ -101,6 +101,7 @@ public class BossZoneAttack : MonoBehaviour
     {
         if (zones == null)
         {
+            Debug.LogError($"{nameof(BossZoneAttack)} cannot disable attack zones because no zones are configured.", this);
             return;
         }
 

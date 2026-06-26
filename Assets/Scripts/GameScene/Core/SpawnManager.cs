@@ -27,6 +27,7 @@ public class SpawnManager : MonoBehaviour
     private float spawnStartTime;
     private bool isBossAlive = false;
     private float xRange = 15f;
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private ScoreKeeper scoreKeeper;
     [SerializeField] private ObjectPool objectPool;
 
@@ -166,7 +167,7 @@ public class SpawnManager : MonoBehaviour
 
         if (boss != null)
         {
-            boss.Initialize(scoreKeeper);
+            boss.Initialize(scoreKeeper, gameManager);
         }
         if (weapon != null)
         {
@@ -180,6 +181,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (powerupEffects == null || powerupEffects.Length == 0)
         {
+            Debug.LogError($"{nameof(SpawnManager)} cannot spawn powerups because no powerup effects are configured.", this);
             return;
         }
 

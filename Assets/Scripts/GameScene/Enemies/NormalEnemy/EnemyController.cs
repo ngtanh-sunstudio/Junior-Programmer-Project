@@ -26,7 +26,7 @@ public class EnemyController : MonoBehaviour
     {
         if (scoreKeeper == null)
         {
-            scoreKeeper = FindFirstObjectByType<ScoreKeeper>();
+            Debug.LogError($"{nameof(EnemyController)} is missing a score keeper reference.", this);
         }
     }
 

@@ -9,7 +9,7 @@ public class HealthBar : MonoBehaviour
     {
         if (slider == null)
         {
-            slider = GetComponentInChildren<Slider>(true);
+            Debug.LogError($"{nameof(HealthBar)} is missing a slider reference.", this);
         }
     }
 
@@ -17,6 +17,7 @@ public class HealthBar : MonoBehaviour
     {
         if (slider == null)
         {
+            Debug.LogError($"{nameof(HealthBar)} cannot set max health because the slider reference is missing.", this);
             return;
         }
 
@@ -28,6 +29,7 @@ public class HealthBar : MonoBehaviour
     {
         if (slider == null)
         {
+            Debug.LogError($"{nameof(HealthBar)} cannot set health because the slider reference is missing.", this);
             return;
         }
 

@@ -26,7 +26,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (healthBar == null)
         {
-            healthBar = GetComponentInChildren<HealthBar>(true);
+            Debug.LogError($"{nameof(PlayerHealth)} is missing a health bar reference.", this);
         }
     }
 

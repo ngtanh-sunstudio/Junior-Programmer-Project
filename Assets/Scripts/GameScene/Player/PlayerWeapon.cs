@@ -21,6 +21,8 @@ public class PlayerWeapon : MonoBehaviour
 
     private float lastFireAnimationTime = float.NegativeInfinity;
     private float nextFireTime;
+    private bool loggedMissingAnimator;
+    private bool loggedMissingObjectPool;
 
     public event Action Fired;
     public event Action Multifire;
@@ -29,11 +31,11 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (animator == null)
         {
-            animator = GetComponentInChildren<Animator>();
+            LogMissingAnimator();
         }
         if(objectPool == null)
         {
-            objectPool = FindFirstObjectByType<ObjectPool>();
+            LogMissingObjectPool();
         }
     }
 
@@ -41,6 +43,7 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (animator == null)
         {
+            LogMissingAnimator();
             return;
         }
 
@@ -54,6 +57,10 @@ public class PlayerWeapon : MonoBehaviour
 
         if (Time.time < nextFireTime || objectPool == null)
         {
+            if (objectPool == null)
+            {
+                LogMissingObjectPool();
+            }
             return;
         }
 
@@ -119,11 +126,34 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (animator == null)
         {
+            LogMissingAnimator();
             return;
         }
 
         lastFireAnimationTime = Time.time;
         animator.SetBool("IsFiring", true);
         animator.SetTrigger("Fire");
+    }
+
+    private void LogMissingAnimator()
+    {
+        if (loggedMissingAnimator)
+        {
+            return;
+        }
+
+        Debug.LogError($"{nameof(PlayerWeapon)} is missing an animator reference.", this);
+        loggedMissingAnimator = true;
+    }
+
+    private void LogMissingObjectPool()
+    {
+        if (loggedMissingObjectPool)
+        {
+            return;
+        }
+
+        Debug.LogError($"{nameof(PlayerWeapon)} is missing an object pool reference.", this);
+        loggedMissingObjectPool = true;
     }
 }

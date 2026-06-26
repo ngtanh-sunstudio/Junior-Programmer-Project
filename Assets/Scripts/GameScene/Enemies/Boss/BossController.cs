@@ -27,18 +27,19 @@ public class BossController : MonoBehaviour
     {
         if (scoreKeeper == null)
         {
-            scoreKeeper = FindFirstObjectByType<ScoreKeeper>();
+            Debug.LogError($"{nameof(BossController)} is missing a score keeper reference.", this);
         }
 
         if (gameManager == null)
         {
-            gameManager = FindFirstObjectByType<GameManager>();
+            Debug.LogError($"{nameof(BossController)} is missing a game manager reference.", this);
         }
     }
 
-    public void Initialize(ScoreKeeper scoreKeeper)
+    public void Initialize(ScoreKeeper scoreKeeper, GameManager gameManager)
     {
         this.scoreKeeper = scoreKeeper;
+        this.gameManager = gameManager;
     }
 
     public void TakeDamage(int damage)

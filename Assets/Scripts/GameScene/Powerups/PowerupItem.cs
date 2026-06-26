@@ -22,6 +22,7 @@ public class PowerupItem : MonoBehaviour
     {
         if (effect == null)
         {
+            Debug.LogError($"{nameof(PowerupItem)} cannot apply a powerup because no effect was initialized.", this);
             return;
         }
 
