@@ -34,6 +34,22 @@ I also kept UI logic separate from game rules. [GameManager](Assets/Scripts/Game
 
 This showed me that UI should be tested at multiple resolutions during development rather than only after the layout is complete.
 
+## Optimizing UI Button Wiring
+
+During review, I was told that some UI and audio code was doing too much hidden work at runtime. Buttons were either wired through Inspector `OnClick` events or discovered globally by [AudioManager](Assets/Scripts/GameScene/Core/AudioManager.cs). That made the source of button behavior harder to trace and meant newly spawned popup buttons would not automatically fit the same sound system.
+
+I changed the overlays so they own their own buttons and register listeners in code. The main menu, settings overlay, pause overlay, win overlay, and game-over overlay now validate their serialized button references once, log a clear error if a reference is missing, and then wire the expected behavior procedurally.
+
+For button click sounds, I moved away from scanning every button in the scene. The shared [UIButton](Assets/Prefabs/UI/UIButton.prefab) prefab now includes [UIButtonClickEmitter](Assets/Scripts/UI/UIButtonClickEmitter.cs), which invokes a generic click event. `AudioManager` only listens to that event, so future popup buttons can use the same prefab without requiring the audio system to search the scene.
+
+## Removing Fallback References
+
+Another issue from review was that some scripts tried to repair missing references at runtime. For example, a null check would call `GetComponent`, `GetComponentInChildren`, or a scene `Find` method and assign the result automatically. This can hide setup mistakes because the script keeps running instead of showing exactly which Inspector reference was missing.
+
+I changed this rule for the project: serialized dependencies should not use fallback lookups. If a required reference is missing, the script should log a `Debug.LogError` that names the missing dependency and the object that reported it. That makes the problem easier to pinpoint during testing and keeps broken scene setup visible.
+
+I also reduced `GetComponent` and `Find` usage to the smallest amount needed. If a lookup is truly necessary, it should happen once during initialization, such as in `Awake`, and the result should be reused. Repeated lookups during gameplay or hidden lookups inside null checks should be avoided.
+
 ## Decoupling Gameplay and Audio
 
 At first, sound playback could have been added directly inside every gameplay script. That would tightly couple game rules to audio clips and make duplicated playback code difficult to maintain.
