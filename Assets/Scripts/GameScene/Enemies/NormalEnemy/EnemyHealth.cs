@@ -4,45 +4,50 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 3;
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private WorldHealthBar healthBar;
 
     private int currentHealth;
     private bool isDead;
+    private bool isInitialized;
 
     public int CurrentHealth => currentHealth;
     public event Action Died;
 
     private void Awake()
     {
-        if (healthBar == null)
+        isInitialized = healthBar != null && healthBar.Initialize();
+
+        if (!isInitialized)
         {
-            Debug.LogError($"{nameof(EnemyHealth)} is missing a health bar reference.", this);
+            Debug.LogError("Enemy health bar is not correctly configured.", this);
+            enabled = false;
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        currentHealth = maxHealth;
-
-        if (healthBar != null)
+        if (!isInitialized)
         {
-            healthBar.SetMaxHealth(maxHealth);
+            return;
         }
+
+        // Pooled enemies must begin every activation with a fresh health state.
+        currentHealth = maxHealth;
+        isDead = false;
+
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDead || damage <= 0)
+        if (!isInitialized || isDead || damage <= 0)
         {
             return;
         }
 
         currentHealth -= damage;
 
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(currentHealth);
-        }
+        healthBar.SetHealth(currentHealth);
 
         if (currentHealth > 0)
         {
@@ -61,6 +66,5 @@ public class EnemyHealth : MonoBehaviour
 
         isDead = true;
         Died?.Invoke();
-        Destroy(gameObject);
     }
 }

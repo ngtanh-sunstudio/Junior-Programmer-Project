@@ -58,5 +58,11 @@ Desktop.ini
 *.log
 *.tmp
 *.bak
+ProfilerCaptures/
+
+# AI assistant working directories
+.agents/
+.codex/
+.codex-temp/
 
 # Keep project source, assets, packages, project settings, and screenshots tracked.

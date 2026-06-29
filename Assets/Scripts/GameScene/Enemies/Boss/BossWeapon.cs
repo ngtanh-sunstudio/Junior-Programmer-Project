@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BossWeapon : MonoBehaviour
 {
-    [SerializeField] private ObjectPool objectPool;
+    [SerializeField] private PoolType projectilePoolType = PoolType.BossProjectile;
     [SerializeField] private Transform turret;
     [SerializeField] private float spreadAngle = 15f;
     [SerializeField] private int bulletsPerVolley = 3;
@@ -17,11 +17,6 @@ public class BossWeapon : MonoBehaviour
 
     public bool IsFiring { get; private set; }
     public event Action Fired;
-
-    public void Initialize(ObjectPool pool)
-    {
-        objectPool = pool;
-    }
 
     public void TryStartFiring(Action onFinished)
     {
@@ -52,9 +47,10 @@ public class BossWeapon : MonoBehaviour
 
     private void FireVolley()
     {
-        if (objectPool == null)
+        PoolManager poolManager = PoolManager.Instance;
+        if (poolManager == null)
         {
-            Debug.LogError("Boss Weapon has no object pool");
+            Debug.LogError($"{nameof(BossWeapon)} cannot fire because no {nameof(PoolManager)} instance exists.", this);
             return;
         }
 
@@ -67,16 +63,16 @@ public class BossWeapon : MonoBehaviour
         {
             float angle = startingAngle + i * spreadAngle;
             Vector3 bulletDirection = Quaternion.AngleAxis(angle, Vector3.up) * baseDirection;
-            SpawnProjectile(firingPoint.position, bulletDirection);
+            SpawnProjectile(poolManager, firingPoint.position, bulletDirection);
         }
 
         Fired?.Invoke();
     }
 
-    private void SpawnProjectile(Vector3 spawnPosition, Vector3 bulletDirection)
+    private void SpawnProjectile(PoolManager poolManager, Vector3 spawnPosition, Vector3 bulletDirection)
     {
         Quaternion bulletRotation = Quaternion.FromToRotation(Vector3.up, bulletDirection);
-        GameObject spawnedProjectile = objectPool.GetObjectFromPool(spawnPosition, bulletRotation);
+        GameObject spawnedProjectile = poolManager.GetObjectFromPool(projectilePoolType, spawnPosition, bulletRotation);
         
         if (spawnedProjectile == null)
         {
@@ -86,10 +82,17 @@ public class BossWeapon : MonoBehaviour
         
         ProjectileController projectile = spawnedProjectile.GetComponent<ProjectileController>();
 
-        if (projectile != null)
+        if (projectile == null)
         {
-            projectile.Initialize(ProjectileOwner.Boss, projectileDamage);
+            Debug.LogError(
+                $"{projectilePoolType} is missing a {nameof(ProjectileController)} component.",
+                spawnedProjectile
+            );
+            poolManager.ReturnObjectToPool(spawnedProjectile);
+            return;
         }
+
+        projectile.Initialize(ProjectileOwner.Boss, projectileDamage);
     }
 
     private void OnDisable()

@@ -14,14 +14,10 @@ public class ProjectileController : MonoBehaviour
     [SerializeField] private int projectileDamage = 1;
     [SerializeField] private ParticleSystem hitParticle;
     [SerializeField] private ProjectileOwner owner = ProjectileOwner.Player;
-    [SerializeField] private ObjectPool objectPool;
+
+    private bool isInFlight;
 
     public event Action Hit;
-
-    private void Awake()
-    {
-        objectPool = GetComponentInParent<ObjectPool>();
-    }
 
     private void Update()
     {
@@ -46,10 +42,16 @@ public class ProjectileController : MonoBehaviour
     {
         owner = projectileOwner;
         projectileDamage = damage;
+        isInFlight = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!isInFlight)
+        {
+            return;
+        }
+
         if (owner == ProjectileOwner.Player)
         {
             DamageEnemyOrBoss(other);
@@ -92,9 +94,16 @@ public class ProjectileController : MonoBehaviour
 
     private void HandleHit()
     {
+        if (!isInFlight)
+        {
+            return;
+        }
+
+        // Multiple colliders can report hits during the same physics step.
+        isInFlight = false;
         Hit?.Invoke();
         PlayHitParticle();
-        ReturnToPool();
+        ReturnFinishedProjectileToPool();
     }
 
     private void PlayHitParticle()
@@ -117,14 +126,30 @@ public class ProjectileController : MonoBehaviour
 
     private void ReturnToPool()
     {
-        if (objectPool != null)
+        if (!isInFlight)
         {
-            objectPool.ReturnObjectToPool(gameObject);
+            return;
+        }
+
+        isInFlight = false;
+        ReturnFinishedProjectileToPool();
+    }
+
+    private void ReturnFinishedProjectileToPool()
+    {
+        if (PoolManager.Instance != null)
+        {
+            PoolManager.Instance.ReturnObjectToPool(gameObject);
         }
         else
         {
-            Debug.LogError("Projectile has no ObjectPool reference.", this);
+            Debug.LogError($"{nameof(ProjectileController)} cannot return to pool because no {nameof(PoolManager)} instance exists.", this);
             gameObject.SetActive(false);
         }
+    }
+
+    private void OnDisable()
+    {
+        isInFlight = false;
     }
 }

@@ -8,7 +8,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private int scoreValue = 10;
 
     private EnemyHealth health;
-    private ScoreKeeper scoreKeeper;
 
     public event Action Died;
 
@@ -24,15 +23,10 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        if (scoreKeeper == null)
+        if (ScoreKeeper.Instance == null)
         {
-            Debug.LogError($"{nameof(EnemyController)} is missing a score keeper reference.", this);
+            Debug.LogError($"{nameof(EnemyController)} cannot award score because no {nameof(ScoreKeeper)} instance exists.", this);
         }
-    }
-
-    public void Initialize(ScoreKeeper scoreKeeper)
-    {
-        this.scoreKeeper = scoreKeeper;
     }
 
     public void TakeDamage(int damage)
@@ -47,12 +41,22 @@ public class EnemyController : MonoBehaviour
 
     private void HandleDeath()
     {
-        if (scoreKeeper != null)
-        {
-            scoreKeeper.AddScore(scoreValue);
-        }
+        ScoreKeeper.Instance?.AddScore(scoreValue);
 
         Died?.Invoke();
+        ReturnToPool();
+    }
+
+    public void ReturnToPool()
+    {
+        if (PoolManager.Instance == null)
+        {
+            Debug.LogError($"{nameof(EnemyController)} cannot return to its pool because no {nameof(PoolManager)} instance exists.", this);
+            gameObject.SetActive(false);
+            return;
+        }
+
+        PoolManager.Instance.ReturnObjectToPool(gameObject);
     }
 
     private void OnDisable()

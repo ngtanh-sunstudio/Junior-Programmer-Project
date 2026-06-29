@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 10;
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private WorldHealthBar healthBar;
     [SerializeField] private bool isShielded;
     [SerializeField] private GameObject shieldIndicator;
     [SerializeField] private ParticleSystem dieParticle;
@@ -14,6 +14,7 @@ public class PlayerHealth : MonoBehaviour
     private PlayerMovement movement;
     private int currentHealth;
     private bool isDead;
+    private bool isInitialized;
 
     public event Action Died;
     public event Action Shielded;
@@ -23,21 +24,25 @@ public class PlayerHealth : MonoBehaviour
     private void Awake()
     {
         movement = GetComponent<PlayerMovement>();
+        isInitialized = healthBar != null && healthBar.Initialize();
 
-        if (healthBar == null)
+        if (!isInitialized)
         {
-            Debug.LogError($"{nameof(PlayerHealth)} is missing a health bar reference.", this);
+            Debug.LogError("Player health bar is not correctly configured.", this);
+            enabled = false;
         }
     }
 
     private void Start()
     {
+        if (!isInitialized)
+        {
+            return;
+        }
+
         currentHealth = maxHealth;
 
-        if (healthBar != null)
-        {
-            healthBar.SetMaxHealth(maxHealth);
-        }
+        healthBar.SetMaxHealth(maxHealth);
 
         if (shieldIndicator != null)
         {
@@ -47,7 +52,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || damage <= 0)
+        if (!isInitialized || isDead || damage <= 0)
         {
             return;
         }
@@ -110,17 +115,14 @@ public class PlayerHealth : MonoBehaviour
 
     private void ApplyDamage(int damage)
     {
-        if (isDead || damage <= 0)
+        if (!isInitialized || isDead || damage <= 0)
         {
             return;
         }
 
         currentHealth -= damage;
 
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(currentHealth);
-        }
+        healthBar.SetHealth(currentHealth);
 
         if (currentHealth > 0)
         {

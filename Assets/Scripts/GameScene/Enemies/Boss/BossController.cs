@@ -5,11 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(BossWeapon))]
 public class BossController : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
     [SerializeField] private int scoreValue = 500;
 
     private BossHealth health;
-    private ScoreKeeper scoreKeeper;
 
     public int CurrentHealth => health.CurrentHealth;
 
@@ -25,21 +23,15 @@ public class BossController : MonoBehaviour
 
     private void Start()
     {
-        if (scoreKeeper == null)
+        if (ScoreKeeper.Instance == null)
         {
-            Debug.LogError($"{nameof(BossController)} is missing a score keeper reference.", this);
+            Debug.LogError($"{nameof(BossController)} cannot award score because no {nameof(ScoreKeeper)} instance exists.", this);
         }
 
-        if (gameManager == null)
+        if (GameManager.Instance == null)
         {
-            Debug.LogError($"{nameof(BossController)} is missing a game manager reference.", this);
+            Debug.LogError($"{nameof(BossController)} cannot end the game because no {nameof(GameManager)} instance exists.", this);
         }
-    }
-
-    public void Initialize(ScoreKeeper scoreKeeper, GameManager gameManager)
-    {
-        this.scoreKeeper = scoreKeeper;
-        this.gameManager = gameManager;
     }
 
     public void TakeDamage(int damage)
@@ -49,15 +41,9 @@ public class BossController : MonoBehaviour
 
     private void HandleDeath()
     {
-        if (scoreKeeper != null)
-        {
-            scoreKeeper.AddScore(scoreValue);
-        }
+        ScoreKeeper.Instance?.AddScore(scoreValue);
 
-        if (gameManager != null)
-        {
-            gameManager.WinGame();
-        }
+        GameManager.Instance?.WinGame();
     }
 
     private void OnDisable()

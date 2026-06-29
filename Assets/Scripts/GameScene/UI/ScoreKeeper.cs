@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class ScoreKeeper : MonoBehaviour
+public class ScoreKeeper : Singleton<ScoreKeeper>
 {
     [SerializeField] private TextMeshProUGUI scoreText;
     private int score;

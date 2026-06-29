@@ -2,10 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
-public class AudioManager : MonoBehaviour
+public class AudioManager : SingletonPersistent<AudioManager>
 {
-    public static AudioManager Instance { get; private set; }
-
     [Header("SFX")]
     [SerializeField] private AudioClip buttonClickSFX;
     [SerializeField, Range(0f, 1f)] private float sfxVolume;
@@ -24,21 +22,19 @@ public class AudioManager : MonoBehaviour
     public float SFXVolume => sfxVolume;
     public float MusicVolume => musicVolume;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance != null && Instance != this)
+        base.Awake();
+
+        if (!IsSingletonInstance)
         {
-            Destroy(gameObject);
             return;
         }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
         if (!ValidateSerializedReferences())
         {
-            Instance = null;
-            enabled = false;
+            ReleaseSingletonInstance();
+            Destroy(gameObject); // Destroyed to prevent an orphan object
             return;
         }
 
@@ -99,19 +95,17 @@ public class AudioManager : MonoBehaviour
         musicSource.volume = musicVolume;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
-        if (Instance != this)
+        if (IsSingletonInstance)
         {
-            return;
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+            SettingsOverlay.SFXVolumeChanged -= SetSFXVolume;
+            SettingsOverlay.MusicVolumeChanged -= SetMusicVolume;
+            UIButtonClickEmitter.Clicked -= PlayButtonClick;
         }
 
-        SceneManager.sceneLoaded -= HandleSceneLoaded;
-        SettingsOverlay.SFXVolumeChanged -= SetSFXVolume;
-        SettingsOverlay.MusicVolumeChanged -= SetMusicVolume;
-        UIButtonClickEmitter.Clicked -= PlayButtonClick;
-
-        Instance = null;
+        base.OnDestroy();
     }
 
     public void PlaySFX(AudioClip audioClip)

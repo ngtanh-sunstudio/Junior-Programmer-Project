@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
-    [Header("Object Pool")]
-    [SerializeField] private ObjectPool objectPool;
+    [Header("Pool")]
+    [SerializeField] private PoolType projectilePoolType = PoolType.PlayerProjectile;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -22,7 +22,7 @@ public class PlayerWeapon : MonoBehaviour
     private float lastFireAnimationTime = float.NegativeInfinity;
     private float nextFireTime;
     private bool loggedMissingAnimator;
-    private bool loggedMissingObjectPool;
+    private bool loggedMissingPoolManager;
 
     public event Action Fired;
     public event Action Multifire;
@@ -33,9 +33,13 @@ public class PlayerWeapon : MonoBehaviour
         {
             LogMissingAnimator();
         }
-        if(objectPool == null)
+    }
+
+    private void Start()
+    {
+        if (PoolManager.Instance == null)
         {
-            LogMissingObjectPool();
+            LogMissingPoolManager();
         }
     }
 
@@ -54,24 +58,25 @@ public class PlayerWeapon : MonoBehaviour
     public void TryFire()
     {
         TriggerFiringAnimation();
+        PoolManager poolManager = PoolManager.Instance;
 
-        if (Time.time < nextFireTime || objectPool == null)
+        if (Time.time < nextFireTime || poolManager == null)
         {
-            if (objectPool == null)
+            if (poolManager == null)
             {
-                LogMissingObjectPool();
+                LogMissingPoolManager();
             }
             return;
         }
 
-        Quaternion baseRotation = objectPool.DefaultRotation;
+        Quaternion baseRotation = poolManager.GetDefaultRotation(projectilePoolType);
         if (isMultifiring)
         {
-            FireSpread(baseRotation);
+            FireSpread(poolManager, baseRotation);
         }
         else
         {
-            SpawnProjectile(baseRotation);
+            SpawnProjectile(poolManager, baseRotation);
         }
 
         nextFireTime = Time.time + fireCooldown;
@@ -89,7 +94,7 @@ public class PlayerWeapon : MonoBehaviour
         isMultifiring = value;
     }
 
-    private void FireSpread(Quaternion baseRotation)
+    private void FireSpread(PoolManager poolManager, Quaternion baseRotation)
     {
         int bulletCount = Mathf.Max(1, bulletsWhenMultifiring);
         float startingAngle = -multifireSpreadAngle * (bulletCount - 1) / 2f;
@@ -98,14 +103,14 @@ public class PlayerWeapon : MonoBehaviour
         {
             float angle = startingAngle + i * multifireSpreadAngle;
             Quaternion bulletRotation = Quaternion.AngleAxis(angle, Vector3.up) * baseRotation;
-            SpawnProjectile(bulletRotation);
+            SpawnProjectile(poolManager, bulletRotation);
         }
     }
 
-    private void SpawnProjectile(Quaternion bulletRotation)
+    private void SpawnProjectile(PoolManager poolManager, Quaternion bulletRotation)
     {
         GameObject spawnedProjectile = 
-            objectPool.GetObjectFromPool(transform.position, bulletRotation);
+            poolManager.GetObjectFromPool(projectilePoolType, transform.position, bulletRotation);
 
         if(spawnedProjectile == null)
         {
@@ -116,10 +121,17 @@ public class PlayerWeapon : MonoBehaviour
         ProjectileController projectile = 
             spawnedProjectile.GetComponent<ProjectileController>();
 
-        if (projectile != null)
+        if (projectile == null)
         {
-            projectile.Initialize(ProjectileOwner.Player, projectileDamage);
+            Debug.LogError(
+                $"{projectilePoolType} is missing a {nameof(ProjectileController)} component.",
+                spawnedProjectile
+            );
+            poolManager.ReturnObjectToPool(spawnedProjectile);
+            return;
         }
+
+        projectile.Initialize(ProjectileOwner.Player, projectileDamage);
     }
 
     private void TriggerFiringAnimation()
@@ -146,14 +158,14 @@ public class PlayerWeapon : MonoBehaviour
         loggedMissingAnimator = true;
     }
 
-    private void LogMissingObjectPool()
+    private void LogMissingPoolManager()
     {
-        if (loggedMissingObjectPool)
+        if (loggedMissingPoolManager)
         {
             return;
         }
 
-        Debug.LogError($"{nameof(PlayerWeapon)} is missing an object pool reference.", this);
-        loggedMissingObjectPool = true;
+        Debug.LogError($"{nameof(PlayerWeapon)} cannot fire because no {nameof(PoolManager)} instance exists.", this);
+        loggedMissingPoolManager = true;
     }
 }

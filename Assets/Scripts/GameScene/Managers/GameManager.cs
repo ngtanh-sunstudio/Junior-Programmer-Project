@@ -3,10 +3,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     [Header("Configuration")]
-    [SerializeField] private SpawnManager spawnManager;
     [SerializeField] private Animator gameAnimator;
     [SerializeField] private float resumeAnimationDuration = 0.25f;
     private bool isPaused;
@@ -63,10 +62,7 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        if (spawnManager != null)
-        {
-            spawnManager.StopSpawning();
-        }
+        SpawnManager.Instance?.StopSpawning();
 
         if (finalScoreText != null && scoreKeeper != null)
         {
@@ -100,10 +96,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (spawnManager != null)
-        {
-            spawnManager.StopSpawning();
-        }
+        SpawnManager.Instance?.StopSpawning();
 
         if (winScoreText != null && scoreKeeper != null)
         {

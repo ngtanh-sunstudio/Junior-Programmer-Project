@@ -4,46 +4,49 @@ using UnityEngine;
 public class BossHealth : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 50;
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private WorldHealthBar healthBar;
     [SerializeField] private ParticleSystem dieParticle;
     
     private int currentHealth;
     private bool isDead;
+    private bool isInitialized;
 
     public event Action Died;
     public int CurrentHealth => currentHealth;
 
     private void Awake()
     {
-        if (healthBar == null)
+        isInitialized = healthBar != null && healthBar.Initialize();
+
+        if (!isInitialized)
         {
-            Debug.LogError($"{nameof(BossHealth)} is missing a health bar reference.", this);
+            Debug.LogError("Boss health bar is not correctly configured.", this);
+            enabled = false;
         }
     }
 
     private void Start()
     {
+        if (!isInitialized)
+        {
+            return;
+        }
+
         currentHealth = maxHealth;
 
-        if (healthBar != null)
-        {
-            healthBar.SetMaxHealth(maxHealth);
-        }
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDead || damage <= 0)
+        if (!isInitialized || isDead || damage <= 0)
         {
             return;
         }
 
         currentHealth -= damage;
 
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(currentHealth);
-        }
+        healthBar.SetHealth(currentHealth);
 
         if (currentHealth > 0)
         {

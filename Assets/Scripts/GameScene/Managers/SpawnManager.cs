@@ -1,7 +1,14 @@
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+public class SpawnManager : Singleton<SpawnManager>
 {
+    private static readonly PoolType[] EnemyPoolTypes =
+    {
+        PoolType.Enemy1,
+        PoolType.Enemy2,
+        PoolType.Enemy3
+    };
+
     private static readonly float[][] EnemySpawnWeightsByStage =
     { // enemy_1 - enemy_2 - enemy_3
         new[] { 1f, 0f, 0f },
@@ -12,7 +19,6 @@ public class SpawnManager : MonoBehaviour
     };
 
     [Header("Configuration")]
-    [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private GameObject bossPrefab;
     [SerializeField] private float timeToSpawn = 3f;
     [SerializeField] private float spawnInterval = 3f;
@@ -27,9 +33,6 @@ public class SpawnManager : MonoBehaviour
     private float spawnStartTime;
     private bool isBossAlive = false;
     private float xRange = 15f;
-    [SerializeField] private GameManager gameManager;
-    [SerializeField] private ScoreKeeper scoreKeeper;
-    [SerializeField] private ObjectPool objectPool;
 
     [Header("Powerups")]
     [SerializeField] private PowerupEffect[] powerupEffects;
@@ -41,6 +44,13 @@ public class SpawnManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (PoolManager.Instance == null)
+        {
+            Debug.LogError($"{nameof(SpawnManager)} cannot start because no {nameof(PoolManager)} instance exists.", this);
+            enabled = false;
+            return;
+        }
+
         spawnStartTime = Time.time;
         InvokeRepeating(nameof(SpawnEnemyWave), timeToSpawn, spawnInterval);
         InvokeRepeating(nameof(SpawnBoss), timeToMaxEnemies, timeToMaxEnemies);
@@ -59,19 +69,25 @@ public class SpawnManager : MonoBehaviour
         for (int i = 0; i < enemiesThisWave; i++)
         {
             int enemyIndex = GetRandomEnemyIndex();
-            if (enemyIndex < 0) // Haven't assigned a prefab
+            PoolType enemyPoolType = EnemyPoolTypes[enemyIndex];
+            Vector3 enemyPosition = GenerateRandomPosition();
+            Quaternion enemyRotation = Quaternion.FromToRotation(Vector3.forward, -Vector3.forward);
+            GameObject spawnedEnemy = PoolManager.Instance.GetObjectFromPool(
+                enemyPoolType,
+                enemyPosition,
+                enemyRotation
+                );
+
+            if (spawnedEnemy == null)
             {
-                return;
+                continue;
             }
 
-            Vector3 enemyPos = GenerateRandomPosition();
-            GameObject spawnedEnemy = Instantiate(enemyPrefabs[enemyIndex], enemyPos,
-                        Quaternion.FromToRotation(Vector3.forward, -Vector3.forward));
-
-            EnemyController enemy = spawnedEnemy.GetComponent<EnemyController>();
-            if (enemy != null)
+            if (!spawnedEnemy.TryGetComponent<EnemyController>(out _))
             {
-                enemy.Initialize(scoreKeeper);
+                Debug.LogError($"{enemyPoolType} is missing an {nameof(EnemyController)} component.", spawnedEnemy);
+                PoolManager.Instance.ReturnObjectToPool(spawnedEnemy);
+                continue;
             }
         }
     }
@@ -90,50 +106,20 @@ public class SpawnManager : MonoBehaviour
 
     private int GetRandomEnemyIndex()
     {
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
-        {
-            Debug.LogWarning("SpawnManager has no enemy prefabs configured.");
-            return -1;
-        }
-
         float[] weights = GetCurrentEnemyWeights();
         float randomValue = Random.value;
 
         if (randomValue < weights[0])
         {
-            return GetConfiguredEnemyIndex(0);
+            return 0;
         }
 
         if (randomValue < weights[0] + weights[1])
         {
-            return GetConfiguredEnemyIndex(1);
+            return 1;
         }
 
-        return GetConfiguredEnemyIndex(2);
-    }
-
-    private int GetConfiguredEnemyIndex(int enemyIndex)
-    {
-        if (enemyIndex < enemyPrefabs.Length && enemyPrefabs[enemyIndex] != null)
-        {
-            return enemyIndex;
-        }
-
-        return GetFirstConfiguredEnemyIndex();
-    }
-
-    private int GetFirstConfiguredEnemyIndex()
-    {
-        for (int i = 0; i < enemyPrefabs.Length; i++)
-        {
-            if (enemyPrefabs[i] != null)
-            {
-                return i;
-            }
-        }
-
-        Debug.LogWarning("SpawnManager enemy prefab slots are empty.");
-        return -1;
+        return 2;
     }
 
     private float[] GetCurrentEnemyWeights()
@@ -158,21 +144,11 @@ public class SpawnManager : MonoBehaviour
         }
 
         Vector3 bossPos = GenerateRandomPosition();
-        GameObject spawnedBoss = Instantiate(
+        Instantiate(
             bossPrefab, 
             bossPos,
-            Quaternion.FromToRotation(Vector3.forward, -Vector3.forward));
-        BossController boss = spawnedBoss.GetComponent<BossController>();
-        BossWeapon weapon = spawnedBoss.GetComponent<BossWeapon>();
-
-        if (boss != null)
-        {
-            boss.Initialize(scoreKeeper, gameManager);
-        }
-        if (weapon != null)
-        {
-            weapon.Initialize(objectPool);
-        }
+            Quaternion.FromToRotation(Vector3.forward, -Vector3.forward)
+            );
         
         isBossAlive = true;
     }
@@ -204,10 +180,14 @@ public class SpawnManager : MonoBehaviour
             effect.PowerupPrefab.transform.rotation
         );
 
-        PowerupItem powerupItem = spawnedPowerup.GetComponent<PowerupItem>();
-        if (powerupItem == null)
+        if (!spawnedPowerup.TryGetComponent(out PowerupItem powerupItem))
         {
-            powerupItem = spawnedPowerup.AddComponent<PowerupItem>();
+            Debug.LogError(
+                $"{effect.PowerupPrefab.name} is missing a {nameof(PowerupItem)} component.",
+                spawnedPowerup
+            );
+            Destroy(spawnedPowerup);
+            return;
         }
 
         powerupItem.Initialize(effect);
@@ -217,5 +197,6 @@ public class SpawnManager : MonoBehaviour
     {
         CancelInvoke(nameof(SpawnEnemyWave));
         CancelInvoke(nameof(SpawnPowerup));
+        CancelInvoke(nameof(SpawnBoss));
     }
 }
