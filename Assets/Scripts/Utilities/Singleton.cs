@@ -12,7 +12,7 @@ public abstract class Singleton<T> : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogError($"A second {typeof(T).Name} instance was created. The duplicate will be destroyed.", this);
+            Debug.LogWarning($"A second {typeof(T).Name} instance was created. The duplicate will be destroyed.", this);
             Destroy(gameObject);
             return;
         }
