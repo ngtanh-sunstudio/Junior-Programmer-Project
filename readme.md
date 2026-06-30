@@ -152,11 +152,11 @@ Editable source: [Screenshots/Flowchart.drawio](Screenshots/Flowchart.drawio)
 
 ## Gameplay Video
 
-[Watch the gameplay demo](https://www.dropbox.com/scl/fi/r9yol8jy907zp8nfgmzeu/Demo_02.mp4?rlkey=jwlvd8j8lk2cw0p8or7sxurfn&st=lkjcvlit&dl=0)
+[Watch the gameplay demo](https://www.dropbox.com/scl/fi/lhxpbwe6m3sanfuzju35q/Demo_03.mp4?rlkey=jpm2k19wn4an5mpy9twuvn7ox&st=1n7vzcc3&dl=0)
 
 ## Play Online
 
-[Unity Play](https://play.unity.com/en/games/672f0ea6-bed0-45af-8355-194055eea3ad/junior-programmer-project)
+[Unity Play](https://play.unity.com/en/games/4ded981a-9e5f-40ea-bd8d-63e3795cbfde/essentialspathway)
 
 ## How to Run Locally
 
