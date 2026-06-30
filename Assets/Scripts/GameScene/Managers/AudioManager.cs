@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,10 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : SingletonPersistent<AudioManager>
 {
+    private const string SFXVolumePreferenceKey = "Audio.SFXVolume";
+    private const string MusicVolumePreferenceKey = "Audio.MusicVolume";
+    private const float PreferenceSaveDelaySeconds = 0.25f;
+
     [Header("SFX")]
     [FormerlySerializedAs("buttonClickSFX")]
     [SerializeField] private AudioClip defaultButtonClickSFX;
@@ -26,6 +31,8 @@ public class AudioManager : SingletonPersistent<AudioManager>
     public float SFXVolume => sfxVolume;
     public float MusicVolume => musicVolume;
 
+    private Coroutine savePreferencesCoroutine;
+
     protected override void Awake()
     {
         base.Awake();
@@ -42,8 +49,9 @@ public class AudioManager : SingletonPersistent<AudioManager>
             return;
         }
 
-        SetSFXVolume(sfxVolume);
-        SetMusicVolume(musicVolume);
+        LoadVolumeSettings();
+        ApplySFXVolume(sfxVolume);
+        ApplyMusicVolume(musicVolume);
 
         SettingsOverlay.SFXVolumeChanged += SetSFXVolume;
         SettingsOverlay.MusicVolumeChanged += SetMusicVolume;
@@ -89,20 +97,86 @@ public class AudioManager : SingletonPersistent<AudioManager>
 
     private void SetSFXVolume(float volume)
     {
-        sfxVolume = volume;
-        SFXSource.volume = volume;
+        ApplySFXVolume(volume);
+        PlayerPrefs.SetFloat(SFXVolumePreferenceKey, sfxVolume);
+        SchedulePreferencesSave();
     }
 
     private void SetMusicVolume(float volume)
     {
-        musicVolume = volume;
+        ApplyMusicVolume(volume);
+        PlayerPrefs.SetFloat(MusicVolumePreferenceKey, musicVolume);
+        SchedulePreferencesSave();
+    }
+
+    private void LoadVolumeSettings()
+    {
+        sfxVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(SFXVolumePreferenceKey, sfxVolume));
+        musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicVolumePreferenceKey, musicVolume));
+    }
+
+    private void ApplySFXVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
+        SFXSource.volume = sfxVolume;
+    }
+
+    private void ApplyMusicVolume(float volume)
+    {
+        musicVolume = Mathf.Clamp01(volume);
         musicSource.volume = musicVolume;
+    }
+
+    private void SchedulePreferencesSave()
+    {
+        if (savePreferencesCoroutine != null)
+        {
+            StopCoroutine(savePreferencesCoroutine);
+        }
+
+        savePreferencesCoroutine = StartCoroutine(SavePreferencesAfterDelay());
+    }
+
+    private IEnumerator SavePreferencesAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(PreferenceSaveDelaySeconds);
+
+        savePreferencesCoroutine = null;
+        PlayerPrefs.Save();
+    }
+
+    private void FlushPreferences()
+    {
+        if (savePreferencesCoroutine != null)
+        {
+            StopCoroutine(savePreferencesCoroutine);
+            savePreferencesCoroutine = null;
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    private void OnApplicationPause(bool isPaused)
+    {
+        if (isPaused && IsSingletonInstance)
+        {
+            FlushPreferences();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (IsSingletonInstance)
+        {
+            FlushPreferences();
+        }
     }
 
     protected override void OnDestroy()
     {
         if (IsSingletonInstance)
         {
+            FlushPreferences();
             SceneManager.sceneLoaded -= HandleSceneLoaded;
             SettingsOverlay.SFXVolumeChanged -= SetSFXVolume;
             SettingsOverlay.MusicVolumeChanged -= SetMusicVolume;

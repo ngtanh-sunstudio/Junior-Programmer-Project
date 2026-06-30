@@ -62,6 +62,14 @@ Instead, gameplay components publish events such as firing, taking a shield, hit
 
 This means an enemy or projectile decides **when** an event happened, but its audio component decides **which sound** represents it. It also allows a sound to continue after the object that triggered it has been destroyed.
 
+## Persisting Audio Settings
+
+Keeping [AudioManager](Assets/Scripts/GameScene/Managers/AudioManager.cs) alive with `DontDestroyOnLoad` preserves its state while changing scenes, but that state is lost when the application closes. To retain the player's last configuration, the manager stores the music and SFX volume values in Unity's `PlayerPrefs`.
+
+During initialization, the manager loads both saved values before the settings sliders are initialized. If no saved values exist, it uses the volumes configured in the scene as first-run defaults. Loaded and newly selected volumes are clamped to the valid `0` to `1` range before they are applied to their `AudioSource`.
+
+Slider changes update the audio immediately and update the corresponding preference in memory. Disk writes are delayed briefly and combined, so dragging a slider does not synchronously save every intermediate value. Any pending settings are also flushed when the application pauses, quits, or destroys the active manager. This keeps the latest configuration reliable across normal sessions without adding repeated disk writes during slider movement.
+
 ## Reusing Projectiles
 
 The first shooting implementation instantiated a new projectile for every shot and destroyed it after impact or when it left the screen. This was simple, but both the player and boss can create many projectiles in a short time.
