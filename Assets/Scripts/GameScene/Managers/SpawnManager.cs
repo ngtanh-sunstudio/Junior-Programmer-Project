@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class SpawnManager : Singleton<SpawnManager>
 {
+    private static readonly Quaternion EnemySpawnRotation = Quaternion.Euler(0f, 180f, 0f);
+
     private static readonly PoolType[] EnemyPoolTypes =
     {
         PoolType.Enemy1,
@@ -71,11 +73,10 @@ public class SpawnManager : Singleton<SpawnManager>
             int enemyIndex = GetRandomEnemyIndex();
             PoolType enemyPoolType = EnemyPoolTypes[enemyIndex];
             Vector3 enemyPosition = GenerateRandomPosition();
-            Quaternion enemyRotation = Quaternion.FromToRotation(Vector3.forward, -Vector3.forward);
             GameObject spawnedEnemy = PoolManager.Instance.GetObjectFromPool(
                 enemyPoolType,
                 enemyPosition,
-                enemyRotation
+                EnemySpawnRotation
                 );
 
             if (spawnedEnemy == null)
@@ -147,7 +148,7 @@ public class SpawnManager : Singleton<SpawnManager>
         Instantiate(
             bossPrefab, 
             bossPos,
-            Quaternion.FromToRotation(Vector3.forward, -Vector3.forward)
+            EnemySpawnRotation
             );
         
         isBossAlive = true;
