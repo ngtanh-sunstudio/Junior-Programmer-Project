@@ -1,6 +1,6 @@
 # Junior Programmer Project
 
-A 3D space shooter built in Unity. The player survives enemy waves, collects powerups, builds score, and defeats a boss to win.
+A 3D top-down shooter built in Unity. The player controls a tank-inspired fighter jet, survives enemy waves, collects powerups, builds score, and defeats a boss to win.
 
 ## What I Learned
 
@@ -47,14 +47,17 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 
 **New functionality**
 
-- **Primitive objects replaced with new assets that function the same way:** I kept the primitive gameplay objects, but replaced the background in the Main Menu UI.
+- **Primitive visuals replaced without rewriting gameplay:** the player, enemies, boss, and projectile now use models from Unity's Tanks tutorial assets while retaining the existing movement, health, combat, collision, and pooling components.
+- **Moon environment added:** the original primitive arena was replaced with reusable Moon environment prefabs from the Tanks asset set.
+- **Projectile presentation updated:** projectiles use the imported shell model and an adapted shell-explosion particle effect while continuing to use the existing projectile and audio scripts.
+- **UI typography updated:** menu and gameplay text now use the Exo 2 font included with the Tanks assets.
 
 **New concepts & skills**
 
 - **Art workflow:** import, browse, select, and apply external assets to an existing project.
 - **High vs. Low Poly:** model complexity vs. visual quality and performance.
-- **Asset Store:** imported starfield backgrounds.
-- **Nested Prefabs:** reusable prefabs placed inside another prefab.
+- **Asset Store:** imported starfield backgrounds and Unity's Tanks tutorial assets.
+- **Nested Prefabs:** placed model assets under existing gameplay prefab roots so visual changes do not replace scripts, colliders, or serialized references.
 - **Material properties:** editable shader values stored in a material asset, such as its color, texture, or surface settings. (Source: [Unity Manual](https://docs.unity3d.com/6000.0/Documentation/Manual/writing-shader-material-properties.html))
 
 ### Extras
@@ -82,7 +85,8 @@ Junior Programmer Project/
 |   |   |-- Background Music/
 |   |   |-- Sci-fi Sounds/
 |   |   |-- Starfield Background/
-|   |   `-- Starfield Layered Background/
+|   |   |-- Starfield Layered Background/
+|   |   `-- _Tanks/
 |   |-- Materials/
 |   |-- Particles/
 |   |-- Powerups/
@@ -117,6 +121,10 @@ Junior Programmer Project/
 ![Gameplay flowchart](Screenshots/Flowchart.drawio.png)
 
 Editable source: [Screenshots/Flowchart.drawio](Screenshots/Flowchart.drawio)
+
+## Third-Party Assets
+
+- **Tanks! — Make a Battle Game for Web and Mobile:** Unity Technologies' tutorial assets provide the tank and shell models, Moon environment prefabs and materials, and shell-explosion visual effect used by this project. See the local [asset documentation](<Assets/Asset Packs/_Tanks/Documentation.txt>) and [third-party notice](<Assets/Asset Packs/_Tanks/Tanks!_Third-PartyNotice.txt>). The asset package is governed by the Unity Asset Store EULA except where its notice specifies another license.
 
 ## Screenshots
 
