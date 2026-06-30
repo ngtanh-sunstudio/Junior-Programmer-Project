@@ -34,14 +34,14 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 
 **New functionality**
 
-- **Non-player object prefabs have basic movement:** through [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs) and [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
-- **Objects are destroyed when they leave the screen:** removed enemies in [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs) and returned off-screen projectiles through [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
+- **Non-player object prefabs have basic movement:** through [EnemyMovement](Assets/Scripts/GameScene/Enemies/NormalEnemy/EnemyMovement.cs) and [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
+- **Objects are recycled when they leave the screen:** returned off-screen enemies and projectiles to their pools through [EnemyMovement](Assets/Scripts/GameScene/Enemies/NormalEnemy/EnemyMovement.cs) and [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
 - **Collisions between objects are handled appropriately**
-- **Objects are spawned at appropriate locations on timed intervals:** used [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs) to spawn enemy waves and powerups at randomized positions.
+- **Objects are spawned at appropriate locations on timed intervals:** used [SpawnManager](Assets/Scripts/GameScene/Managers/SpawnManager.cs) to spawn enemy waves and powerups at randomized positions.
 
 **New concepts & skills**
 
-- **Create basic gameplay independently:** planned how non-player objects should move, collide, and spawn, then implemented those rules in [EnemyController](Assets/Scripts/GameScene/Enemies/EnemyController.cs), [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs), and [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs).
+- **Create basic gameplay independently:** planned how non-player objects should move, collide, and spawn, then implemented those rules in [EnemyMovement](Assets/Scripts/GameScene/Enemies/NormalEnemy/EnemyMovement.cs), [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs), and [SpawnManager](Assets/Scripts/GameScene/Managers/SpawnManager.cs).
 
 ### [Lab 5 - Swap Out Your Assets](https://learn.unity.com/pathway/junior-programmer/unit/user-interface/tutorial/lab-5-swap-out-your-assets?version=6.3)
 
@@ -59,12 +59,12 @@ A 3D space shooter built in Unity. The player survives enemy waves, collects pow
 
 ### Extras
 
-- **Difficulty progression:** learned to combine timed method calls, weighted random selection, and interpolation to grow enemy waves in [SpawnManager](Assets/Scripts/GameScene/Core/SpawnManager.cs).
-- **Boss encounter:** split a complex enemy into orchestration, health, movement, projectile volleys, warning-zone overlap checks, and event-driven audio using [BossController](Assets/Scripts/GameScene/Enemies/BossController.cs), [BossHealth](Assets/Scripts/GameScene/Enemies/BossHealth.cs), [BossMovement](Assets/Scripts/GameScene/Enemies/BossMovement.cs), [BossWeapon](Assets/Scripts/GameScene/Enemies/BossWeapon.cs), [BossZoneAttack](Assets/Scripts/GameScene/Enemies/BossZoneAttack.cs), and [BossAudio](Assets/Scripts/GameScene/Enemies/BossAudio.cs).
+- **Difficulty progression:** learned to combine timed method calls, weighted random selection, and interpolation to grow enemy waves in [SpawnManager](Assets/Scripts/GameScene/Managers/SpawnManager.cs).
+- **Boss encounter:** split a complex enemy into orchestration, health, movement, projectile volleys, warning-zone overlap checks, and event-driven audio using [BossController](Assets/Scripts/GameScene/Enemies/Boss/BossController.cs), [BossHealth](Assets/Scripts/GameScene/Enemies/Boss/BossHealth.cs), [BossMovement](Assets/Scripts/GameScene/Enemies/Boss/BossMovement.cs), [BossWeapon](Assets/Scripts/GameScene/Enemies/Boss/BossWeapon.cs), [BossZoneAttack](Assets/Scripts/GameScene/Enemies/Boss/BossZoneAttack.cs), and [BossAudio](Assets/Scripts/GameScene/Enemies/Boss/BossAudio.cs).
 - **Reusable powerups:** learned to store effect data and behavior in [ScriptableObjects](Assets/Scripts/GameScene/Powerups/PowerupEffect.cs), collect them through [PowerupItem](Assets/Scripts/GameScene/Powerups/PowerupItem.cs), and implement [speed](Assets/Scripts/GameScene/Powerups/SpeedBoost.cs), [shield](Assets/Scripts/GameScene/Powerups/Shield.cs), and [multifire](Assets/Scripts/GameScene/Powerups/Multifire.cs) effects.
-- **Object pooling:** learned to pre-create and reuse projectiles with [ObjectPool](Assets/Scripts/GameScene/Infrastructure/ObjectPool.cs), shared by [PlayerWeapon](Assets/Scripts/GameScene/Player/PlayerWeapon.cs), [BossWeapon](Assets/Scripts/GameScene/Enemies/BossWeapon.cs), and [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
-- **Game state and UI:** learned to coordinate pause, restart, game-over, and win states in [GameManager](Assets/Scripts/GameScene/Core/GameManager.cs), with focused [score](Assets/Scripts/GameScene/UI/ScoreKeeper.cs), [health bar](Assets/Scripts/GameScene/UI/HealthBar.cs), and [camera-facing UI](Assets/Scripts/GameScene/UI/FaceCamera.cs) components.
-- **Audio and effects:** learned to keep playback centralized in [AudioManager](Assets/Scripts/GameScene/Core/AudioManager.cs) while gameplay events trigger sounds through [PlayerAudio](Assets/Scripts/GameScene/Player/PlayerAudio.cs), [EnemyAudio](Assets/Scripts/GameScene/Enemies/EnemyAudio.cs), [BossAudio](Assets/Scripts/GameScene/Enemies/BossAudio.cs), and [ProjectileAudio](Assets/Scripts/GameScene/Combat/ProjectileAudio.cs); hit and death particles are spawned by the related health and projectile components.
+- **Object pooling:** learned to pre-create and reuse typed projectile and enemy pools with [PoolManager](Assets/Scripts/GameScene/Infrastructure/PoolManager.cs) and [PoolType](Assets/Scripts/GameScene/Infrastructure/PoolType.cs), shared by [SpawnManager](Assets/Scripts/GameScene/Managers/SpawnManager.cs), [PlayerWeapon](Assets/Scripts/GameScene/Player/PlayerWeapon.cs), [BossWeapon](Assets/Scripts/GameScene/Enemies/Boss/BossWeapon.cs), and [ProjectileController](Assets/Scripts/GameScene/Combat/ProjectileController.cs).
+- **Game state and UI:** learned to coordinate pause, restart, game-over, and win states in [GameManager](Assets/Scripts/GameScene/Managers/GameManager.cs), with focused [score](Assets/Scripts/GameScene/UI/ScoreKeeper.cs), [world-space health bar](Assets/Scripts/GameScene/UI/WorldHealthBar.cs), and [camera-facing UI](Assets/Scripts/GameScene/UI/FaceCamera.cs) components.
+- **Audio and effects:** learned to keep playback centralized in [AudioManager](Assets/Scripts/GameScene/Managers/AudioManager.cs) while gameplay events trigger sounds through [PlayerAudio](Assets/Scripts/GameScene/Player/PlayerAudio.cs), [EnemyAudio](Assets/Scripts/GameScene/Enemies/NormalEnemy/EnemyAudio.cs), [BossAudio](Assets/Scripts/GameScene/Enemies/Boss/BossAudio.cs), and [ProjectileAudio](Assets/Scripts/GameScene/Combat/ProjectileAudio.cs); hit and death particles are spawned by the related health and projectile components.
 - **Menus and presentation:** connected scene loading and animated settings panels in [MenuController](Assets/Scripts/MainMenuScene/MenuController.cs), then added the looping background through [ParallaxBackground](Assets/Scripts/MainMenuScene/ParallaxBackground.cs).
 
 For the main development decisions, refactors, and lessons learned, see [design.md](design.md).
@@ -93,14 +93,18 @@ Junior Programmer Project/
 |   `-- Scripts/
 |       |-- GameScene/
 |       |   |-- Combat/
-|       |   |-- Core/
 |       |   |-- Enemies/
+|       |   |   |-- Boss/
+|       |   |   `-- NormalEnemy/
 |       |   |-- Infrastructure/
 |       |   |-- Input/
+|       |   |-- Managers/
 |       |   |-- Player/
 |       |   |-- Powerups/
 |       |   `-- UI/
-|       `-- MainMenuScene/
+|       |-- MainMenuScene/
+|       |-- UI/
+|       `-- Utilities/
 |-- Packages/
 |-- ProjectSettings/
 |-- Screenshots/
