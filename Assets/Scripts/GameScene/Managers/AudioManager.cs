@@ -1,11 +1,15 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : SingletonPersistent<AudioManager>
 {
     [Header("SFX")]
-    [SerializeField] private AudioClip buttonClickSFX;
+    [FormerlySerializedAs("buttonClickSFX")]
+    [SerializeField] private AudioClip defaultButtonClickSFX;
+    [SerializeField] private AudioClip confirmButtonClickSFX;
+    [SerializeField] private AudioClip backButtonClickSFX;
     [SerializeField, Range(0f, 1f)] private float sfxVolume;
     [SerializeField] private AudioSource SFXSource;
 
@@ -44,7 +48,7 @@ public class AudioManager : SingletonPersistent<AudioManager>
         SettingsOverlay.SFXVolumeChanged += SetSFXVolume;
         SettingsOverlay.MusicVolumeChanged += SetMusicVolume;
         SceneManager.sceneLoaded += HandleSceneLoaded;
-        UIButtonClickEmitter.Clicked += PlayButtonClick;
+        UIButtonSoundEmitter.Clicked += PlayButtonClick;
     }
 
     private void Start()
@@ -102,7 +106,7 @@ public class AudioManager : SingletonPersistent<AudioManager>
             SceneManager.sceneLoaded -= HandleSceneLoaded;
             SettingsOverlay.SFXVolumeChanged -= SetSFXVolume;
             SettingsOverlay.MusicVolumeChanged -= SetMusicVolume;
-            UIButtonClickEmitter.Clicked -= PlayButtonClick;
+            UIButtonSoundEmitter.Clicked -= PlayButtonClick;
         }
 
         base.OnDestroy();
@@ -113,9 +117,16 @@ public class AudioManager : SingletonPersistent<AudioManager>
         SFXSource.PlayOneShot(audioClip);
     }
 
-    public void PlayButtonClick()
+    public void PlayButtonClick(UIButtonSoundType soundType)
     {
-        PlaySFX(buttonClickSFX);
+        AudioClip clip = soundType switch
+        {
+            UIButtonSoundType.Confirm => confirmButtonClickSFX,
+            UIButtonSoundType.Back => backButtonClickSFX,
+            _ => defaultButtonClickSFX
+        };
+
+        PlaySFX(clip);
     }
 
     private bool ValidateSerializedReferences()
@@ -134,9 +145,21 @@ public class AudioManager : SingletonPersistent<AudioManager>
             hasReferences = false;
         }
 
-        if (buttonClickSFX == null)
+        if (defaultButtonClickSFX == null)
         {
-            Debug.LogError($"{nameof(AudioManager)} is missing a button click SFX clip.", this);
+            Debug.LogError($"{nameof(AudioManager)} is missing the default button click SFX clip.", this);
+            hasReferences = false;
+        }
+
+        if (confirmButtonClickSFX == null)
+        {
+            Debug.LogError($"{nameof(AudioManager)} is missing the confirm button click SFX clip.", this);
+            hasReferences = false;
+        }
+
+        if (backButtonClickSFX == null)
+        {
+            Debug.LogError($"{nameof(AudioManager)} is missing the back button click SFX clip.", this);
             hasReferences = false;
         }
 

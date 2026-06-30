@@ -36,11 +36,15 @@ This showed me that UI should be tested at multiple resolutions during developme
 
 ## Optimizing UI Button Wiring
 
-During review, I was told that some UI and audio code was doing too much hidden work at runtime. Buttons were either wired through Inspector `OnClick` events or discovered globally by [AudioManager](Assets/Scripts/GameScene/Core/AudioManager.cs). That made the source of button behavior harder to trace and meant newly spawned popup buttons would not automatically fit the same sound system.
+During review, I was told that some UI and audio code was doing too much hidden work at runtime. Buttons were either wired through Inspector `OnClick` events or discovered globally by [AudioManager](Assets/Scripts/GameScene/Managers/AudioManager.cs). That made the source of button behavior harder to trace and meant newly spawned popup buttons would not automatically fit the same sound system.
 
 I changed the overlays so they own their own buttons and register listeners in code. The main menu, settings overlay, pause overlay, win overlay, and game-over overlay now validate their serialized button references once, log a clear error if a reference is missing, and then wire the expected behavior procedurally.
 
-For button click sounds, I moved away from scanning every button in the scene. The shared [UIButton](Assets/Prefabs/UI/UIButton.prefab) prefab now includes [UIButtonClickEmitter](Assets/Scripts/UI/UIButtonClickEmitter.cs), which invokes a generic click event. `AudioManager` only listens to that event, so future popup buttons can use the same prefab without requiring the audio system to search the scene.
+I initially put the reusable click behavior on a shared button prefab. Review showed that this unnecessarily constrained the button's appearance and hierarchy, and made it harder for teammates to understand which settings belonged to a scene and which came from the prefab. I unpacked the existing buttons and removed that prefab so every button is independently editable in its scene.
+
+For buttons that need sound, **GameObject > UI (Canvas) > Button With Audio** creates a standard TextMeshPro Unity button and adds [UIButtonSoundEmitter](Assets/Scripts/UI/UIButtonSoundEmitter.cs). The component retrieves the colocated `Button` once in `Awake`, exposes only a `Default`, `Confirm`, or `Back` sound category, and publishes that category when clicked. [AudioManager](Assets/Scripts/GameScene/Managers/AudioManager.cs) maps the category to its configured clip and remains responsible for playback. An ordinary Unity button can still be used when no click sound is wanted.
+
+This keeps button actions visible in their owning scripts, avoids persistent Inspector `OnClick` wiring, and lets teammates create and style buttons without depending on a project prefab. The editor command itself is implemented by [ButtonWithAudioMenu](Assets/Scripts/UI/Editor/ButtonWithAudioMenu.cs).
 
 ## Removing Fallback References
 
